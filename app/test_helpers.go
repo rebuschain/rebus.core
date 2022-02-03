@@ -5,7 +5,9 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	ibctesting "github.com/cosmos/ibc-go/v3/testing"
+
 	"github.com/tharsis/ethermint/encoding"
 
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -14,7 +16,14 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 	dbm "github.com/tendermint/tm-db"
 	feemarkettypes "github.com/tharsis/ethermint/x/feemarket/types"
+	"github.com/tharsis/evmos/cmd/config"
 )
+
+func init() {
+	cfg := sdk.GetConfig()
+	config.SetBech32Prefixes(cfg)
+	config.SetBip44CoinType(cfg)
+}
 
 // DefaultConsensusParams defines the default Tendermint consensus params used in
 // Evmos testing.
@@ -35,8 +44,17 @@ var DefaultConsensusParams = &abci.ConsensusParams{
 	},
 }
 
+func init() {
+	cfg := sdk.GetConfig()
+	config.SetBech32Prefixes(cfg)
+	config.SetBip44CoinType(cfg)
+}
+
 // Setup initializes a new Evmos. A Nop logger is set in Evmos.
-func Setup(isCheckTx bool, feemarketGenesis *feemarkettypes.GenesisState) *Evmos {
+func Setup(
+	isCheckTx bool,
+	feemarketGenesis *feemarkettypes.GenesisState,
+) *Evmos {
 	db := dbm.NewMemDB()
 	app := NewEvmos(log.NewNopLogger(), db, nil, true, map[int64]bool{}, DefaultNodeHome, 5, encoding.MakeConfig(ModuleBasics), simapp.EmptyAppOptions{})
 	if !isCheckTx {
@@ -48,7 +66,6 @@ func Setup(isCheckTx bool, feemarketGenesis *feemarkettypes.GenesisState) *Evmos
 			if err := feemarketGenesis.Validate(); err != nil {
 				panic(err)
 			}
-
 			genesisState[feemarkettypes.ModuleName] = app.AppCodec().MustMarshalJSON(feemarketGenesis)
 		}
 

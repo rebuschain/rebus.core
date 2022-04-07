@@ -133,7 +133,7 @@ func init() {
 		panic(err)
 	}
 
-	DefaultNodeHome = filepath.Join(userHomeDir, ".evmosd")
+	DefaultNodeHome = filepath.Join(userHomeDir, ".rebusd")
 
 	// manually update the power reduction by replacing micro (u) -> atto (a) evmos
 	sdk.DefaultPowerReduction = ethermint.PowerReduction
@@ -141,7 +141,7 @@ func init() {
 
 const (
 	// Name defines the application binary name
-	Name = "evmosd"
+	Name = "rebusd"
 	// latest software upgrade name
 	upgradeName = "Olympus-Mons-v0.4.1"
 )

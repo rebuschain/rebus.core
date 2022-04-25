@@ -3,9 +3,9 @@ before:
   - go mod download
 
 builds:
-  - id: "evmosd-darwin"
+  - id: "rebusd-darwin"
     main: ./cmd/evmosd
-    binary: bin/evmosd
+    binary: bin/rebusd
     env:
       - CGO_ENABLED=1
       - CC=o64-clang
@@ -17,10 +17,10 @@ builds:
     flags:
         - -tags=cgo
     ldflags:
-      - -s -w -X github.com/cosmos/cosmos-sdk/version.Name=evmos -X github.com/cosmos/cosmos-sdk/version.AppName=evmosd -X github.com/cosmos/cosmos-sdk/version.Version={{.Version}} -X github.com/cosmos/cosmos-sdk/version.Commit={{.Commit}}
-  - id: "evmosd-darwin-arm64"
+      - -s -w -X github.com/cosmos/cosmos-sdk/version.Name=rebus -X github.com/cosmos/cosmos-sdk/version.AppName=rebus -X github.com/cosmos/cosmos-sdk/version.Version={{.Version}} -X github.com/cosmos/cosmos-sdk/version.Commit={{.Commit}}
+  - id: "rebusd-darwin-arm64"
     main: ./cmd/evmosd
-    binary: bin/evmosd
+    binary: bin/rebusd
     env:
       - CGO_ENABLED=1
       - CC=oa64-clang
@@ -32,8 +32,8 @@ builds:
     flags:
       - -tags=cgo
     ldflags:
-      - -s -w -X github.com/cosmos/cosmos-sdk/version.Name=evmos -X github.com/cosmos/cosmos-sdk/version.AppName=evmosd -X github.com/cosmos/cosmos-sdk/version.Version={{.Version}} -X github.com/cosmos/cosmos-sdk/version.Commit={{.Commit}}
-  - id: "evmosd-linux"
+      - -s -w -X github.com/cosmos/cosmos-sdk/version.Name=rebus -X github.com/cosmos/cosmos-sdk/version.AppName=rebusd -X github.com/cosmos/cosmos-sdk/version.Version={{.Version}} -X github.com/cosmos/cosmos-sdk/version.Commit={{.Commit}}
+  - id: "rebusd-linux"
     main: ./cmd/evmosd
     binary: bin/rebusd
     env:
@@ -48,7 +48,7 @@ builds:
       - -tags=cgo
     ldflags:
       - -s -w -X github.com/cosmos/cosmos-sdk/version.Name=rebus -X github.com/cosmos/cosmos-sdk/version.AppName=rebusd -X github.com/cosmos/cosmos-sdk/version.Version={{.Version}} -X github.com/cosmos/cosmos-sdk/version.Commit={{.Commit}}
-  - id: "evmosd-linux-arm64"
+  - id: "rebusd-linux-arm64"
     main: ./cmd/evmosd
     binary: bin/rebusd
     env:
@@ -63,9 +63,9 @@ builds:
       - -tags=cgo
     ldflags:
       - -s -w -X github.com/cosmos/cosmos-sdk/version.Name=rebus -X github.com/cosmos/cosmos-sdk/version.AppName=rebusd -X github.com/cosmos/cosmos-sdk/version.Version={{.Version}} -X github.com/cosmos/cosmos-sdk/version.Commit={{.Commit}}
-  - id: "evmosd-windows"
+  - id: "rebusd-windows"
     main: ./cmd/evmosd
-    binary: bin/evmosd
+    binary: bin/rebusd
     env:
       - CGO_ENABLED=1
       - CC=x86_64-w64-mingw32-gcc
@@ -78,7 +78,7 @@ builds:
       - -tags=cgo
       - -buildmode=exe
     ldflags:
-      - -s -w -X github.com/cosmos/cosmos-sdk/version.Name=evmos -X github.com/cosmos/cosmos-sdk/version.AppName=evmosd -X github.com/cosmos/cosmos-sdk/version.Version={{.Version}} -X github.com/cosmos/cosmos-sdk/version.Commit={{.Commit}}
+      - -s -w -X github.com/cosmos/cosmos-sdk/version.Name=rebus -X github.com/cosmos/cosmos-sdk/version.AppName=rebusd -X github.com/cosmos/cosmos-sdk/version.Version={{.Version}} -X github.com/cosmos/cosmos-sdk/version.Commit={{.Commit}}
 
 archives:
 - name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}'
@@ -91,11 +91,11 @@ archives:
     - goos: windows
       format: zip
   builds:
-  - evmosd-darwin
-  - evmosd-darwin-arm64
-  - evmosd-windows
-  - evmosd-linux
-  - evmosd-linux-arm64
+  - rebusd-darwin
+  - rebusd-darwin-arm64
+  - rebusd-windows
+  - rebusd-linux
+  - rebusd-linux-arm64
   
 checksum:
   name_template: 'checksums.txt'

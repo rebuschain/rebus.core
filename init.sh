@@ -1,6 +1,6 @@
 
 KEY="mykey"
-CHAINID="reb_9600-1"
+CHAINID="reb_6666-1"
 MONIKER="localtestnet"
 KEYRING="test"
 # KEYALGO="eth_secp256k1"
@@ -16,7 +16,7 @@ command -v jq > /dev/null 2>&1 || { echo >&2 "jq not installed. More info: https
 # remove existing daemon
 rm -rf ~/.rebusd*
 
-make install
+# make install
 
 rebusd config keyring-backend $KEYRING
 rebusd config chain-id $CHAINID
@@ -88,7 +88,26 @@ if [[ $1 == "pending" ]]; then
 fi
 
 # Allocate genesis accounts (cosmos formatted addresses)
-rebusd add-genesis-account $KEY 100000000000000000000000000arebus --keyring-backend $KEYRING
+rebusd add-genesis-account $KEY 80000000000000000000000000arebus --keyring-backend $KEYRING
+
+export ACC1=rebus1dl90xa89ljj29mna8uasdxs3nejdw46x8767tc
+export ACC2=rebus1scpjcw2ux95e4rf0m42kldkz3z83hu23hsm4wk
+export ACC3=rebus1tpr6r224eq2camacpec32nmsuup7yfa6hpy86j
+export ACC4=rebus1u05h23z07y4wvhetrz566hjk5d99ep42ammaem
+export ACC5=rebus1x9p6dc0pyjvxwz0cptp5aqv5u9mhhl6egh2glh
+export ACC6=rebus1t5hfzsn8h6vzcrf3dkwksasgkceg2ejthrqh3r
+export ACC7=rebus17eryqu4vsvp6065tz23vfdgpdxztv4ujuyk3jv
+export ACC8=rebus1p8sw297thl5jxq9dxetzpsnxeps3daqyh3723j
+
+rebusd add-genesis-account $ACC1 25000000000000000000000000arebus --keyring-backend $KEYRING
+rebusd add-genesis-account $ACC2 25000000000000000000000000arebus --keyring-backend $KEYRING
+rebusd add-genesis-account $ACC3 25000000000000000000000000arebus --keyring-backend $KEYRING
+rebusd add-genesis-account $ACC4 25000000000000000000000000arebus --keyring-backend $KEYRING
+rebusd add-genesis-account $ACC5 25000000000000000000000000arebus --keyring-backend $KEYRING
+rebusd add-genesis-account $ACC6 25000000000000000000000000arebus --keyring-backend $KEYRING
+rebusd add-genesis-account $ACC7 25000000000000000000000000arebus --keyring-backend $KEYRING
+rebusd add-genesis-account $ACC8 25000000000000000000000000arebus --keyring-backend $KEYRING
+
 
 # Update total supply with claim values
 validators_supply=$(cat $HOME/.rebusd/config/genesis.json | jq -r '.app_state["bank"]["supply"][0]["amount"]')

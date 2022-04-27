@@ -1,7 +1,7 @@
 
 KEY="mykey"
 CHAINID="reb_6666-1"
-MONIKER="localtestnet"
+MONIKER="node-alphanet"
 KEYRING="test"
 # KEYALGO="eth_secp256k1"
 KEYALGO="secp256k1"
@@ -88,7 +88,7 @@ if [[ $1 == "pending" ]]; then
 fi
 
 # Allocate genesis accounts (cosmos formatted addresses)
-rebusd add-genesis-account $KEY 80000000000000000000000000arebus --keyring-backend $KEYRING
+rebusd add-genesis-account $KEY 800000000000000000000000000arebus --keyring-backend $KEYRING
 
 export ACC1=rebus1dl90xa89ljj29mna8uasdxs3nejdw46x8767tc
 export ACC2=rebus1scpjcw2ux95e4rf0m42kldkz3z83hu23hsm4wk
@@ -113,7 +113,7 @@ rebusd add-genesis-account $ACC8 25000000000000000000000000arebus --keyring-back
 validators_supply=$(cat $HOME/.rebusd/config/genesis.json | jq -r '.app_state["bank"]["supply"][0]["amount"]')
 # Bc is required to add this big numbers
 # total_supply=$(bc <<< "$amount_to_claim+$validators_supply")
-total_supply=100000000000000000000000000
+total_supply=1000000000000000000000000000
 cat $HOME/.rebusd/config/genesis.json | jq -r --arg total_supply "$total_supply" '.app_state["bank"]["supply"][0]["amount"]=$total_supply' > $HOME/.rebusd/config/tmp_genesis.json && mv $HOME/.rebusd/config/tmp_genesis.json $HOME/.rebusd/config/genesis.json
 
 # Sign genesis transaction

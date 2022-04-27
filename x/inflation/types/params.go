@@ -7,7 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	evm "github.com/tharsis/ethermint/x/evm/types"
+	cmdcfg "github.com/tharsis/evmos/cmd/config"
 	"gopkg.in/yaml.v2"
 )
 
@@ -40,7 +40,7 @@ func NewParams(
 // default minting module parameters
 func DefaultParams() Params {
 	return Params{
-		MintDenom: evm.DefaultEVMDenom,
+		MintDenom: cmdcfg.BaseDenom,
 		ExponentialCalculation: ExponentialCalculation{
 			A: sdk.NewDec(int64(300_000_000)),
 			R: sdk.NewDecWithPrec(5, 1), // 0.5

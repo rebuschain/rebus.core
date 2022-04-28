@@ -144,7 +144,7 @@ build-docker:
 	$(DOCKER) tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest
 	# docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:${COMMIT_HASH}
 	# update old container
-	$(DOCKER) rm evmos || true
+	$(DOCKER) rm rebus || true
 	# create a new container from the latest image
 	$(DOCKER) create --name rebus -t -i ${DOCKER_IMAGE}:latest rebus
 	# move the binaries to the ./build directory

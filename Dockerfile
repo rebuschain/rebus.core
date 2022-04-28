@@ -1,23 +1,23 @@
-FROM golang:stretch AS build-env
+ARG BASE_IMG_TAG=nonroot 
 
-WORKDIR /go/src/github.com/tharsis/evmos
+FROM golang:1.18-bullseye as build
 
-RUN apt update
-RUN apt install git -y
-
-COPY . .
+WORKDIR /rebus
+COPY . /rebus
 
 RUN make build
 
-FROM golang:stretch
+## Deploy image
+FROM gcr.io/distroless/base-debian11:${BASE_IMG_TAG} 
 
-RUN apt update
-RUN apt install ca-certificates jq -y
+COPY --from=build /rebus/build/rebusd /bin/rebusd
 
-WORKDIR /root
+ENV HOME /
+WORKDIR $HOME
 
-COPY --from=build-env /go/src/github.com/tharsis/evmos/build/evmosd /usr/bin/evmosd
+EXPOSE 26656 
+EXPOSE 26657
+EXPOSE 1317
 
-EXPOSE 26656 26657 1317 9090
-
-CMD ["evmosd"]
+ENTRYPOINT ["rebusd"]
+CMD [ "start" ]

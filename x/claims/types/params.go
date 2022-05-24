@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	DefaultClaimsDenom        = "aevmos"
+	DefaultClaimsDenom        = "arebus"
 	DefaultDurationUntilDecay = time.Hour
 	DefaultDurationOfDecay    = time.Hour * 5
 )

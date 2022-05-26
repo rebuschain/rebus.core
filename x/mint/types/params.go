@@ -9,6 +9,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/tharsis/evmos/v4/cmd/config"
 )
 
 // Parameter store keys
@@ -34,7 +35,7 @@ func NewParams(
 // default minting module parameters
 func DefaultParams() Params {
 	return Params{
-		MintDenom:     sdk.DefaultBondDenom,
+		MintDenom:     config.BaseDenom,
 		BlocksPerYear: uint64(60 * 60 * 8766 / 5), // assuming 5 second block times
 	}
 }

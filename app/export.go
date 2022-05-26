@@ -6,11 +6,16 @@ import (
 
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
+	"github.com/cosmos/cosmos-sdk/codec"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
+
+	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	evmtypes "github.com/tharsis/ethermint/x/evm/types"
 
 	"github.com/tharsis/ethermint/encoding"
 )
@@ -59,6 +64,31 @@ func (app *Evmos) ExportAppStateAndValidators(
 		Height:          height,
 		ConsensusParams: app.BaseApp.GetConsensusParams(ctx),
 	}, nil
+}
+
+func (genState GenesisState) ConfigureBondDenom(cdc codec.JSONCodec, bondDenom string) GenesisState {
+	// customize bond denom
+	var stakingGenState stakingtypes.GenesisState
+	cdc.MustUnmarshalJSON(genState[stakingtypes.ModuleName], &stakingGenState)
+	stakingGenState.Params.BondDenom = bondDenom
+	genState[stakingtypes.ModuleName] = cdc.MustMarshalJSON(&stakingGenState)
+
+	var crisisGenState crisistypes.GenesisState
+	cdc.MustUnmarshalJSON(genState[crisistypes.ModuleName], &crisisGenState)
+	crisisGenState.ConstantFee.Denom = bondDenom
+	genState[crisistypes.ModuleName] = cdc.MustMarshalJSON(&crisisGenState)
+
+	var govGenState govtypes.GenesisState
+	cdc.MustUnmarshalJSON(genState[govtypes.ModuleName], &govGenState)
+	govGenState.DepositParams.MinDeposit[0].Denom = bondDenom
+	genState[govtypes.ModuleName] = cdc.MustMarshalJSON(&govGenState)
+
+	var evmGenState evmtypes.GenesisState
+	cdc.MustUnmarshalJSON(genState[evmtypes.ModuleName], &evmGenState)
+	evmGenState.Params.EvmDenom = bondDenom
+	genState[evmtypes.ModuleName] = cdc.MustMarshalJSON(&evmGenState)
+
+	return genState
 }
 
 // prepare for fresh start at zero height

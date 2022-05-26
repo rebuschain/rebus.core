@@ -336,9 +336,8 @@ func NewEvmos(
 		// SDK keys
 		authtypes.StoreKey, banktypes.StoreKey, stakingtypes.StoreKey,
 		distrtypes.StoreKey, slashingtypes.StoreKey,
-		minttypes.StoreKey, distrtypes.StoreKey, slashingtypes.StoreKey,
-		govtypes.StoreKey, paramstypes.StoreKey, upgradetypes.StoreKey,
-		evidencetypes.StoreKey, capabilitytypes.StoreKey,
+		minttypes.StoreKey, govtypes.StoreKey, paramstypes.StoreKey,
+		upgradetypes.StoreKey, evidencetypes.StoreKey, capabilitytypes.StoreKey,
 		feegrant.StoreKey, authzkeeper.StoreKey,
 		// ibc keys
 		ibchost.StoreKey, ibctransfertypes.StoreKey,
@@ -705,6 +704,7 @@ func NewEvmos(
 		capabilitytypes.ModuleName,
 		authtypes.ModuleName,
 		banktypes.ModuleName,
+		minttypes.ModuleName,
 		distrtypes.ModuleName,
 		// NOTE: staking requires the claiming hook
 		claimstypes.ModuleName,
@@ -727,7 +727,7 @@ func NewEvmos(
 		// Ethermint modules
 		feemarkettypes.ModuleName,
 		// Evmos modules
-		// vestingtypes.ModuleName,
+		vestingtypes.ModuleName,
 		// inflationtypes.ModuleName,
 		erc20types.ModuleName,
 		// incentivestypes.ModuleName,

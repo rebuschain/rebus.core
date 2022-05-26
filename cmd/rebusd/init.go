@@ -29,6 +29,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
+	"github.com/tharsis/evmos/v4/app"
+	rebuscfg "github.com/tharsis/evmos/v4/cmd/config"
 )
 
 type printInfo struct {
@@ -131,7 +133,11 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 				return fmt.Errorf("genesis.json file already exists: %v", genFile)
 			}
 
-			appState, err := json.MarshalIndent(mbm.DefaultGenesis(cdc), "", " ")
+			appState, err := json.MarshalIndent(
+				app.GenesisState(mbm.DefaultGenesis(cdc)).
+					ConfigureBondDenom(cdc, rebuscfg.BaseDenom), "", " ",
+				// ConfigureICA(cdc), "", " ",
+			)
 			if err != nil {
 				return errors.Wrap(err, "Failed to marshall default genesis state")
 			}

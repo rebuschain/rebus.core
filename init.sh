@@ -1,7 +1,7 @@
 
 KEY="mykey"
-CHAINID="reb_6666-1"
-MONIKER="node-alphanet"
+CHAINID="reb_9999-1"
+MONIKER="node-devnet"
 KEYRING="test"
 # KEYALGO="eth_secp256k1"
 KEYALGO="secp256k1"
@@ -27,15 +27,9 @@ rebusd keys add $KEY --keyring-backend $KEYRING --algo $KEYALGO
 # Set moniker and chain-id for Evmos (Moniker can be anything, chain-id must be an integer)
 rebusd init $MONIKER --chain-id $CHAINID 
 
-# Change parameter token denominations to arebus
-cat $HOME/.rebusd/config/genesis.json | jq '.app_state["staking"]["params"]["bond_denom"]="arebus"' > $HOME/.rebusd/config/tmp_genesis.json && mv $HOME/.rebusd/config/tmp_genesis.json $HOME/.rebusd/config/genesis.json
-cat $HOME/.rebusd/config/genesis.json | jq '.app_state["crisis"]["constant_fee"]["denom"]="arebus"' > $HOME/.rebusd/config/tmp_genesis.json && mv $HOME/.rebusd/config/tmp_genesis.json $HOME/.rebusd/config/genesis.json
-cat $HOME/.rebusd/config/genesis.json | jq '.app_state["gov"]["deposit_params"]["min_deposit"][0]["denom"]="arebus"' > $HOME/.rebusd/config/tmp_genesis.json && mv $HOME/.rebusd/config/tmp_genesis.json $HOME/.rebusd/config/genesis.json
-cat $HOME/.rebusd/config/genesis.json | jq '.app_state["mint"]["params"]["mint_denom"]="arebus"' > $HOME/.rebusd/config/tmp_genesis.json && mv $HOME/.rebusd/config/tmp_genesis.json $HOME/.rebusd/config/genesis.json
-cat $HOME/.rebusd/config/genesis.json | jq '.app_state["evm"]["params"]["evm_denom"]="arebus"' > $HOME/.rebusd/config/tmp_genesis.json && mv $HOME/.rebusd/config/tmp_genesis.json $HOME/.rebusd/config/genesis.json
 
 # increase block time (?)
-cat $HOME/.rebusd/config/genesis.json | jq '.consensus_params["block"]["time_iota_ms"]="30000"' > $HOME/.rebusd/config/tmp_genesis.json && mv $HOME/.rebusd/config/tmp_genesis.json $HOME/.rebusd/config/genesis.json
+# cat $HOME/.rebusd/config/genesis.json | jq '.consensus_params["block"]["time_iota_ms"]="30000"' > $HOME/.rebusd/config/tmp_genesis.json && mv $HOME/.rebusd/config/tmp_genesis.json $HOME/.rebusd/config/genesis.json
 
 # Set gas limit in genesis
 cat $HOME/.rebusd/config/genesis.json | jq '.consensus_params["block"]["max_gas"]="10000000"' > $HOME/.rebusd/config/tmp_genesis.json && mv $HOME/.rebusd/config/tmp_genesis.json $HOME/.rebusd/config/genesis.json
@@ -57,11 +51,11 @@ cat $HOME/.rebusd/config/genesis.json | jq -r --arg current_date "$current_date"
 #cat $HOME/.evmosd/config/genesis.json | jq -r --arg amount_to_claim "$amount_to_claim" '.app_state["bank"]["balances"] += [{"address":"evmos15cvq3ljql6utxseh0zau9m8ve2j8erz89m5wkz","coins":[{"denom":"aevmos", "amount":$amount_to_claim}]}]' > $HOME/.evmosd/config/tmp_genesis.json && mv $HOME/.evmosd/config/tmp_genesis.json $HOME/.evmosd/config/genesis.json
 
 # disable produce empty block
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    sed -i '' 's/create_empty_blocks = true/create_empty_blocks = false/g' $HOME/.rebusd/config/config.toml
-  else
-    sed -i 's/create_empty_blocks = true/create_empty_blocks = false/g' $HOME/.rebusd/config/config.toml
-fi
+#if [[ "$OSTYPE" == "darwin"* ]]; then
+#    sed -i '' 's/create_empty_blocks = true/create_empty_blocks = false/g' $HOME/.rebusd/config/config.toml
+#  else
+#    sed -i 's/create_empty_blocks = true/create_empty_blocks = false/g' $HOME/.rebusd/config/config.toml
+#fi
 
 if [[ $1 == "pending" ]]; then
   if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -106,15 +100,15 @@ rebusd add-genesis-account $ACC4 25000000000000000000000000arebus --keyring-back
 rebusd add-genesis-account $ACC5 25000000000000000000000000arebus --keyring-backend $KEYRING
 rebusd add-genesis-account $ACC6 25000000000000000000000000arebus --keyring-backend $KEYRING
 rebusd add-genesis-account $ACC7 25000000000000000000000000arebus --keyring-backend $KEYRING
-rebusd add-genesis-account $ACC8 25000000000000000000000000arebus --keyring-backend $KEYRING
-
+# rebusd add-genesis-account $ACC8 25000000000000000000000000arebus --keyring-backend $KEYRING
+rebusd  add-genesis-account $ACC8  25000000000000000000000000arebus --vesting-amount 25000000000000000000000000arebus --vesting-start-time 1652816751 --vesting-end-time 1666028997
 
 # Update total supply with claim values
 validators_supply=$(cat $HOME/.rebusd/config/genesis.json | jq -r '.app_state["bank"]["supply"][0]["amount"]')
 # Bc is required to add this big numbers
 # total_supply=$(bc <<< "$amount_to_claim+$validators_supply")
 total_supply=1000000000000000000000000000
-cat $HOME/.rebusd/config/genesis.json | jq -r --arg total_supply "$total_supply" '.app_state["bank"]["supply"][0]["amount"]=$total_supply' > $HOME/.rebusd/config/tmp_genesis.json && mv $HOME/.rebusd/config/tmp_genesis.json $HOME/.rebusd/config/genesis.json
+# cat $HOME/.rebusd/config/genesis.json | jq -r --arg total_supply "$total_supply" '.app_state["bank"]["supply"][0]["amount"]=$total_supply' > $HOME/.rebusd/config/tmp_genesis.json && mv $HOME/.rebusd/config/tmp_genesis.json $HOME/.rebusd/config/genesis.json
 
 # Sign genesis transaction
 rebusd gentx $KEY 1000000000000000000000arebus --keyring-backend $KEYRING --chain-id $CHAINID
@@ -130,4 +124,4 @@ if [[ $1 == "pending" ]]; then
 fi
 
 # Start the node (remove the --pruning=nothing flag if historical queries are not needed)
-rebusd start --pruning=nothing $TRACE --log_level $LOGLEVEL --minimum-gas-prices=0.0001arebus --json-rpc.api eth,txpool,personal,net,debug,web3
+# rebusd start --pruning=nothing $TRACE --log_level $LOGLEVEL --minimum-gas-prices=0.0001arebus --json-rpc.api eth,txpool,personal,net,debug,web3

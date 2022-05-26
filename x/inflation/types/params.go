@@ -7,17 +7,17 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	cmdcfg "github.com/tharsis/evmos/cmd/config"
-	"gopkg.in/yaml.v2"
+	evm "github.com/tharsis/ethermint/x/evm/types"
 )
+
+var DefaultInflationDenom = evm.DefaultEVMDenom
 
 // Parameter store keys
 var (
-	KeyMintDenom              = []byte("KeyMintDenom")
-	KeyEpochIdentifier        = []byte("KeyEpochIdentifier")
-	KeyEpochsPerPeriod        = []byte("KeyEpochsPerPeriod")
-	KeyExponentialCalculation = []byte("KeyExponentialCalculation")
-	KeyInflationDistribution  = []byte("KeyInflationDistribution")
+	ParamStoreKeyMintDenom              = []byte("ParamStoreKeyMintDenom")
+	ParamStoreKeyExponentialCalculation = []byte("ParamStoreKeyExponentialCalculation")
+	ParamStoreKeyInflationDistribution  = []byte("ParamStoreKeyInflationDistribution")
+	ParamStoreKeyEnableInflation        = []byte("ParamStoreKeyEnableInflation")
 )
 
 // ParamTable for inflation module
@@ -29,44 +29,43 @@ func NewParams(
 	mintDenom string,
 	exponentialCalculation ExponentialCalculation,
 	inflationDistribution InflationDistribution,
+	enableInflation bool,
 ) Params {
 	return Params{
 		MintDenom:              mintDenom,
 		ExponentialCalculation: exponentialCalculation,
 		InflationDistribution:  inflationDistribution,
+		EnableInflation:        enableInflation,
 	}
 }
 
 // default minting module parameters
 func DefaultParams() Params {
 	return Params{
-		MintDenom: cmdcfg.BaseDenom,
+		MintDenom: DefaultInflationDenom,
 		ExponentialCalculation: ExponentialCalculation{
-			A: sdk.NewDec(int64(300_000_000)),
-			R: sdk.NewDecWithPrec(5, 1), // 0.5
-			C: sdk.NewDec(int64(9_375_000)),
-			B: sdk.ZeroDec(),
+			A:             sdk.NewDec(int64(300_000_000)),
+			R:             sdk.NewDecWithPrec(50, 2), // 50%
+			C:             sdk.NewDec(int64(9_375_000)),
+			BondingTarget: sdk.NewDecWithPrec(66, 2), // 66%
+			MaxVariance:   sdk.ZeroDec(),             // 0%
 		},
 		InflationDistribution: InflationDistribution{
 			StakingRewards:  sdk.NewDecWithPrec(533333334, 9), // 0.53 = 40% / (1 - 25%)
 			UsageIncentives: sdk.NewDecWithPrec(333333333, 9), // 0.33 = 25% / (1 - 25%)
 			CommunityPool:   sdk.NewDecWithPrec(133333333, 9), // 0.13 = 10% / (1 - 25%)
 		},
+		EnableInflation: true,
 	}
-}
-
-// String implements the Stringer interface.
-func (p Params) String() string {
-	out, _ := yaml.Marshal(p)
-	return string(out)
 }
 
 // Implements params.ParamSet
 func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
-		paramtypes.NewParamSetPair(KeyMintDenom, &p.MintDenom, validateMintDenom),
-		paramtypes.NewParamSetPair(KeyExponentialCalculation, &p.ExponentialCalculation, validateExponentialCalculation),
-		paramtypes.NewParamSetPair(KeyInflationDistribution, &p.InflationDistribution, validateInflationDistribution),
+		paramtypes.NewParamSetPair(ParamStoreKeyMintDenom, &p.MintDenom, validateMintDenom),
+		paramtypes.NewParamSetPair(ParamStoreKeyExponentialCalculation, &p.ExponentialCalculation, validateExponentialCalculation),
+		paramtypes.NewParamSetPair(ParamStoreKeyInflationDistribution, &p.InflationDistribution, validateInflationDistribution),
+		paramtypes.NewParamSetPair(ParamStoreKeyEnableInflation, &p.EnableInflation, validateBool),
 	}
 }
 
@@ -111,13 +110,18 @@ func validateExponentialCalculation(i interface{}) error {
 		return fmt.Errorf("long term inflation cannot be negative")
 	}
 
-	// validate bonding factor
-	if v.B.GT(sdk.NewDec(1)) {
-		return fmt.Errorf("bonding factor cannot be greater than 1")
+	// validate bonded target
+	if v.BondingTarget.GT(sdk.NewDec(1)) {
+		return fmt.Errorf("bonded target cannot be greater than 1")
 	}
 
-	if v.B.IsNegative() {
-		return fmt.Errorf("bonding factor cannot be negative")
+	if !v.BondingTarget.IsPositive() {
+		return fmt.Errorf("bonded target cannot be zero or negative")
+	}
+
+	// validate max variance
+	if v.MaxVariance.IsNegative() {
+		return fmt.Errorf("max variance cannot be negative")
 	}
 
 	return nil
@@ -149,6 +153,15 @@ func validateInflationDistribution(i interface{}) error {
 	return nil
 }
 
+func validateBool(i interface{}) error {
+	_, ok := i.(bool)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
+	}
+
+	return nil
+}
+
 func (p Params) Validate() error {
 	if err := validateMintDenom(p.MintDenom); err != nil {
 		return err
@@ -156,5 +169,9 @@ func (p Params) Validate() error {
 	if err := validateExponentialCalculation(p.ExponentialCalculation); err != nil {
 		return err
 	}
-	return validateInflationDistribution(p.InflationDistribution)
+	if err := validateInflationDistribution(p.InflationDistribution); err != nil {
+		return err
+	}
+
+	return validateBool(p.EnableInflation)
 }

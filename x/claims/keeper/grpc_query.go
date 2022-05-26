@@ -9,13 +9,16 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/tharsis/evmos/x/claims/types"
+	"github.com/tharsis/evmos/v4/x/claims/types"
 )
 
 var _ types.QueryServer = Keeper{}
 
-// TotalUnclaimed returns the total amount unclaimed from the airdrop.
-func (k Keeper) TotalUnclaimed(c context.Context, _ *types.QueryTotalUnclaimedRequest) (*types.QueryTotalUnclaimedResponse, error) {
+// TotalUnclaimed returns the total amount unclaimed from the airdrop
+func (k Keeper) TotalUnclaimed(
+	c context.Context,
+	_ *types.QueryTotalUnclaimedRequest,
+) (*types.QueryTotalUnclaimedResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
 	moduleAccBal := k.GetModuleAccountBalances(ctx)
 
@@ -24,8 +27,11 @@ func (k Keeper) TotalUnclaimed(c context.Context, _ *types.QueryTotalUnclaimedRe
 	}, nil
 }
 
-// Params returns params of the claim module.
-func (k Keeper) Params(c context.Context, _ *types.QueryParamsRequest) (*types.QueryParamsResponse, error) {
+// Params returns the params of the claim module
+func (k Keeper) Params(
+	c context.Context,
+	_ *types.QueryParamsRequest,
+) (*types.QueryParamsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
 	params := k.GetParams(ctx)
 
@@ -34,16 +40,16 @@ func (k Keeper) Params(c context.Context, _ *types.QueryParamsRequest) (*types.Q
 	}, nil
 }
 
-// ClaimsRecords returns all the the claimable records
+// ClaimsRecords returns all claims records
 func (k Keeper) ClaimsRecords(
-	goCtx context.Context,
+	c context.Context,
 	req *types.QueryClaimsRecordsRequest,
 ) (*types.QueryClaimsRecordsResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "empty request")
 	}
 
-	ctx := sdk.UnwrapSDKContext(goCtx)
+	ctx := sdk.UnwrapSDKContext(c)
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefixClaimsRecords)
 
 	claimsRecords := []types.ClaimsRecordAddress{}
@@ -77,9 +83,11 @@ func (k Keeper) ClaimsRecords(
 	}, nil
 }
 
-// ClaimsRecord returns initial claimable amount per user and the claims per action
+// ClaimsRecord returns the initial claimable amount per user and the claims per
+// action. Claimable amount per action will be 0 if claiming is disabled, before
+// the start time, or after end time.
 func (k Keeper) ClaimsRecord(
-	goCtx context.Context,
+	c context.Context,
 	req *types.QueryClaimsRecordRequest,
 ) (*types.QueryClaimsRecordResponse, error) {
 	if req == nil {
@@ -91,11 +99,11 @@ func (k Keeper) ClaimsRecord(
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	ctx := sdk.UnwrapSDKContext(goCtx)
+	ctx := sdk.UnwrapSDKContext(c)
 
 	claimsRecord, found := k.GetClaimsRecord(ctx, addr)
 	if !found {
-		return nil, status.Errorf(codes.NotFound, "claim record for address '%s'", req.Address)
+		return nil, status.Errorf(codes.NotFound, "claims record for address '%s'", req.Address)
 	}
 
 	params := k.GetParams(ctx)
@@ -103,10 +111,12 @@ func (k Keeper) ClaimsRecord(
 
 	claims := make([]types.Claim, len(actions))
 	for i, action := range actions {
+		claimableAmt, _ := k.ClaimableAmountForAction(ctx, claimsRecord, action, params)
+
 		claims[i] = types.Claim{
 			Action:          action,
 			Completed:       claimsRecord.HasClaimedAction(action),
-			ClaimableAmount: k.GetClaimableAmountForAction(ctx, addr, claimsRecord, action, params),
+			ClaimableAmount: claimableAmt,
 		}
 	}
 

@@ -4,6 +4,9 @@ import (
 	"testing"
 	"time"
 
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
@@ -16,13 +19,12 @@ import (
 
 	evm "github.com/tharsis/ethermint/x/evm/types"
 
-	"github.com/tharsis/evmos/app"
-	"github.com/tharsis/evmos/x/inflation/types"
+	"github.com/tharsis/evmos/v4/app"
+	epochstypes "github.com/tharsis/evmos/v4/x/epochs/types"
+	"github.com/tharsis/evmos/v4/x/inflation/types"
 )
 
-var (
-	denomMint = evm.DefaultEVMDenom
-)
+var denomMint = types.DefaultInflationDenom
 
 type KeeperTestSuite struct {
 	suite.Suite
@@ -34,8 +36,15 @@ type KeeperTestSuite struct {
 	consAddress    sdk.ConsAddress
 }
 
+var s *KeeperTestSuite
+
 func TestKeeperTestSuite(t *testing.T) {
-	suite.Run(t, new(KeeperTestSuite))
+	s = new(KeeperTestSuite)
+	suite.Run(t, s)
+
+	// Run Ginkgo integration tests
+	RegisterFailHandler(Fail)
+	RunSpecs(t, "Keeper Suite")
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
@@ -52,7 +61,7 @@ func (suite *KeeperTestSuite) DoSetupTest(t require.TestingT) {
 	// setup context
 	suite.ctx = suite.app.BaseApp.NewContext(checkTx, tmproto.Header{
 		Height:          1,
-		ChainID:         "evmos_9000-1",
+		ChainID:         "evmos_9001-1",
 		Time:            time.Now().UTC(),
 		ProposerAddress: suite.consAddress.Bytes(),
 
@@ -79,12 +88,27 @@ func (suite *KeeperTestSuite) DoSetupTest(t require.TestingT) {
 	queryHelper := baseapp.NewQueryServerTestHelper(suite.ctx, suite.app.InterfaceRegistry())
 	types.RegisterQueryServer(queryHelper, suite.app.InflationKeeper)
 	suite.queryClient = types.NewQueryClient(queryHelper)
+
+	// Set epoch start time and height for all epoch identifiers
+	identifiers := []string{epochstypes.WeekEpochID, epochstypes.DayEpochID}
+	for _, identifier := range identifiers {
+		epoch, found := suite.app.EpochsKeeper.GetEpochInfo(suite.ctx, identifier)
+		suite.Require().True(found)
+		epoch.StartTime = suite.ctx.BlockTime()
+		epoch.CurrentEpochStartHeight = suite.ctx.BlockHeight()
+		suite.app.EpochsKeeper.SetEpochInfo(suite.ctx, epoch)
+	}
 }
 
 func (suite *KeeperTestSuite) Commit() {
+	suite.CommitAfter(time.Nanosecond)
+}
+
+func (suite *KeeperTestSuite) CommitAfter(t time.Duration) {
 	_ = suite.app.Commit()
 	header := suite.ctx.BlockHeader()
 	header.Height += 1
+	header.Time = header.Time.Add(t)
 	suite.app.BeginBlock(abci.RequestBeginBlock{
 		Header: header,
 	})

@@ -4,8 +4,9 @@ import (
 	fmt "fmt"
 	"testing"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/suite"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 type InflationTestSuite struct {
@@ -18,14 +19,14 @@ func TestInflationSuite(t *testing.T) {
 
 func (suite *InflationTestSuite) TestCalculateEpochMintProvision() {
 	bondingParams := DefaultParams()
-	bondingParams.ExponentialCalculation.B = sdk.NewDecWithPrec(5, 1)
-
+	bondingParams.ExponentialCalculation.MaxVariance = sdk.NewDecWithPrec(40, 2)
 	epochsPerPeriod := int64(365)
 
 	testCases := []struct {
 		name              string
 		params            Params
 		period            uint64
+		bondedRatio       sdk.Dec
 		expEpochProvision sdk.Dec
 		expPass           bool
 	}{
@@ -33,90 +34,108 @@ func (suite *InflationTestSuite) TestCalculateEpochMintProvision() {
 			"pass - initial perid",
 			DefaultParams(),
 			uint64(0),
-			sdk.NewDec(int64(847_602)),
+			sdk.OneDec(),
+			sdk.MustNewDecFromStr("847602739726027397260274.000000000000000000"),
 			true,
 		},
 		{
 			"pass - period 1",
 			DefaultParams(),
 			uint64(1),
-			sdk.NewDec(int64(436_643)),
+			sdk.OneDec(),
+			sdk.MustNewDecFromStr("436643835616438356164384.000000000000000000"),
 			true,
 		},
 		{
 			"pass - period 2",
 			DefaultParams(),
 			uint64(2),
-			sdk.NewDec(int64(231_164)),
+			sdk.OneDec(),
+			sdk.MustNewDecFromStr("231164383561643835616438.000000000000000000"),
 			true,
 		},
 		{
 			"pass - period 3",
 			DefaultParams(),
 			uint64(3),
-			sdk.NewDec(int64(128_424)),
+			sdk.OneDec(),
+			sdk.MustNewDecFromStr("128424657534246575342466.000000000000000000"),
 			true,
 		},
 		{
 			"pass - period 20",
 			DefaultParams(),
 			uint64(20),
-			sdk.NewDec(int64(25_685)),
+			sdk.OneDec(),
+			sdk.MustNewDecFromStr("25685715348753210410959.000000000000000000"),
 			true,
 		},
 		{
 			"pass - period 21",
 			DefaultParams(),
 			uint64(21),
-			sdk.NewDec(int64(25_685)),
+			sdk.OneDec(),
+			sdk.MustNewDecFromStr("25685323427801262739726.000000000000000000"),
 			true,
 		},
 		{
-			"pass - with bonding - initial perid",
+			"pass - 0 percent bonding - initial period",
 			bondingParams,
 			uint64(0),
-			sdk.NewDec(int64(635_702)),
+			sdk.ZeroDec(),
+			sdk.MustNewDecFromStr("1186643835616438356164384.000000000000000000"),
 			true,
 		},
 		{
-			"pass - with bonding - period 1",
+			"pass - 0 percent bonding - period 1",
 			bondingParams,
 			uint64(1),
-			sdk.NewDec(int64(327_482)),
+			sdk.ZeroDec(),
+			sdk.MustNewDecFromStr("611301369863013698630137.000000000000000000"),
 			true,
 		},
 		{
-			"pass - with bonding - period 2",
+			"pass - 0 percent bonding - period 2",
 			bondingParams,
 			uint64(2),
-			sdk.NewDec(int64(173_373)),
+			sdk.ZeroDec(),
+			sdk.MustNewDecFromStr("323630136986301369863014.000000000000000000"),
 			true,
 		},
 		{
-			"pass - with bonding - period 3",
+			"pass - 0 percent bonding - period 3",
 			bondingParams,
 			uint64(3),
-			sdk.NewDec(int64(96_318)),
+			sdk.ZeroDec(),
+			sdk.MustNewDecFromStr("179794520547945205479452.000000000000000000"),
 			true,
 		},
 		{
-			"pass - with bonding - period 20",
+			"pass - 0 percent bonding - period 20",
 			bondingParams,
 			uint64(20),
-			sdk.NewDec(int64(19_264)),
+			sdk.ZeroDec(),
+			sdk.MustNewDecFromStr("35960001488254494575342.000000000000000000"),
 			true,
 		},
 		{
-			"pass - with bonding - period 21",
+			"pass - 0 percent bonding - period 21",
 			bondingParams,
 			uint64(21),
-			sdk.NewDec(int64(19_263)),
+			sdk.ZeroDec(),
+			sdk.MustNewDecFromStr("35959452798921767835616.000000000000000000"),
 			true,
 		},
 	}
 	for _, tc := range testCases {
 		suite.Run(fmt.Sprintf("Case %s", tc.name), func() {
-			epochMintProvisions := CalculateEpochMintProvision(tc.params, tc.period, epochsPerPeriod)
+			epochMintProvisions := CalculateEpochMintProvision(
+				tc.params,
+				tc.period,
+				epochsPerPeriod,
+				tc.bondedRatio,
+			)
+
 			suite.Require().Equal(tc.expEpochProvision, epochMintProvisions)
 		})
 	}

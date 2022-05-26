@@ -9,12 +9,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 	"github.com/stretchr/testify/require"
 
-	"github.com/tharsis/evmos/app"
-	evmosd "github.com/tharsis/evmos/cmd/rebusd"
+	"github.com/tharsis/evmos/v4/app"
+	rebusd "github.com/tharsis/evmos/v4/cmd/rebusd"
 )
 
 func TestInitCmd(t *testing.T) {
-	rootCmd, _ := evmosd.NewRootCmd()
+	rootCmd, _ := rebusd.NewRootCmd()
 	rootCmd.SetArgs([]string{
 		"init",       // Test the init cmd
 		"evmos-test", // Moniker
@@ -24,4 +24,17 @@ func TestInitCmd(t *testing.T) {
 
 	err := svrcmd.Execute(rootCmd, app.DefaultNodeHome)
 	require.NoError(t, err)
+}
+
+func TestAddKeyLedgerCmd(t *testing.T) {
+	rootCmd, _ := evmosd.NewRootCmd()
+	rootCmd.SetArgs([]string{
+		"keys",
+		"add",
+		"mykey",
+		fmt.Sprintf("--%s", flags.FlagUseLedger),
+	})
+
+	err := svrcmd.Execute(rootCmd, app.DefaultNodeHome)
+	require.Error(t, err)
 }

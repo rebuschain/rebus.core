@@ -4,14 +4,13 @@ import (
 	"testing"
 	"time"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	feemarkettypes "github.com/tharsis/ethermint/x/feemarket/types"
 
-	simapp "github.com/tharsis/evmos/app"
-	"github.com/tharsis/evmos/x/epochs"
-	"github.com/tharsis/evmos/x/epochs/types"
+	simapp "github.com/tharsis/evmos/v4/app"
+	"github.com/tharsis/evmos/v4/x/epochs"
+	"github.com/tharsis/evmos/v4/x/epochs/types"
 )
 
 func TestEpochsExportGenesis(t *testing.T) {
@@ -19,7 +18,7 @@ func TestEpochsExportGenesis(t *testing.T) {
 	feemarketGenesis := feemarkettypes.DefaultGenesisState()
 	feemarketGenesis.Params.EnableHeight = 1
 	feemarketGenesis.Params.NoBaseFee = false
-	feemarketGenesis.BaseFee = sdk.NewInt(feemarketGenesis.Params.InitialBaseFee)
+
 	app := simapp.Setup(false, feemarketGenesis)
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
@@ -29,14 +28,14 @@ func TestEpochsExportGenesis(t *testing.T) {
 	genesis := epochs.ExportGenesis(ctx, app.EpochsKeeper)
 	require.Len(t, genesis.Epochs, 2)
 
-	require.Equal(t, genesis.Epochs[0].Identifier, "day")
+	require.Equal(t, genesis.Epochs[0].Identifier, types.DayEpochID)
 	require.Equal(t, genesis.Epochs[0].StartTime, chainStartTime)
 	require.Equal(t, genesis.Epochs[0].Duration, time.Hour*24)
 	require.Equal(t, genesis.Epochs[0].CurrentEpoch, int64(0))
 	require.Equal(t, genesis.Epochs[0].CurrentEpochStartHeight, chainStartHeight)
 	require.Equal(t, genesis.Epochs[0].CurrentEpochStartTime, chainStartTime)
 	require.Equal(t, genesis.Epochs[0].EpochCountingStarted, false)
-	require.Equal(t, genesis.Epochs[1].Identifier, "week")
+	require.Equal(t, genesis.Epochs[1].Identifier, types.WeekEpochID)
 	require.Equal(t, genesis.Epochs[1].StartTime, chainStartTime)
 	require.Equal(t, genesis.Epochs[1].Duration, time.Hour*24*7)
 	require.Equal(t, genesis.Epochs[1].CurrentEpoch, int64(0))
@@ -50,7 +49,7 @@ func TestEpochsInitGenesis(t *testing.T) {
 	feemarketGenesis := feemarkettypes.DefaultGenesisState()
 	feemarketGenesis.Params.EnableHeight = 1
 	feemarketGenesis.Params.NoBaseFee = false
-	feemarketGenesis.BaseFee = sdk.NewInt(feemarketGenesis.Params.InitialBaseFee)
+
 	app := simapp.Setup(false, feemarketGenesis)
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
 
@@ -61,7 +60,7 @@ func TestEpochsInitGenesis(t *testing.T) {
 		app.EpochsKeeper.DeleteEpochInfo(ctx, epochInfo.Identifier)
 	}
 
-	now := time.Now()
+	now := time.Now().UTC()
 	ctx = ctx.WithBlockHeight(1)
 	ctx = ctx.WithBlockTime(now)
 

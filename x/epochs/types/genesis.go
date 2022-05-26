@@ -5,15 +5,16 @@ import (
 	"time"
 )
 
+// NewGenesisState creates a new genesis state instance
 func NewGenesisState(epochs []EpochInfo) *GenesisState {
 	return &GenesisState{Epochs: epochs}
 }
 
-// DefaultGenesis returns the default Capability genesis state
-func DefaultGenesis() *GenesisState {
+// DefaultGenesisState returns the default epochs genesis state
+func DefaultGenesisState() *GenesisState {
 	epochs := []EpochInfo{
 		{
-			Identifier:              "week",
+			Identifier:              WeekEpochID,
 			StartTime:               time.Time{},
 			Duration:                time.Hour * 24 * 7,
 			CurrentEpoch:            0,
@@ -22,7 +23,7 @@ func DefaultGenesis() *GenesisState {
 			EpochCountingStarted:    false,
 		},
 		{
-			Identifier:              "day",
+			Identifier:              DayEpochID,
 			StartTime:               time.Time{},
 			Duration:                time.Hour * 24,
 			CurrentEpoch:            0,

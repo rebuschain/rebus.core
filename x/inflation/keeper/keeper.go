@@ -7,7 +7,7 @@ import (
 
 	"github.com/tendermint/tendermint/libs/log"
 
-	"github.com/tharsis/evmos/x/inflation/types"
+	"github.com/tharsis/evmos/v4/x/inflation/types"
 )
 
 // Keeper of the inflation store
@@ -19,6 +19,7 @@ type Keeper struct {
 	accountKeeper    types.AccountKeeper
 	bankKeeper       types.BankKeeper
 	distrKeeper      types.DistrKeeper
+	stakingKeeper    types.StakingKeeper
 	feeCollectorName string
 }
 
@@ -30,6 +31,7 @@ func NewKeeper(
 	ak types.AccountKeeper,
 	bk types.BankKeeper,
 	dk types.DistrKeeper,
+	sk types.StakingKeeper,
 	feeCollectorName string,
 ) Keeper {
 	// ensure mint module account is set
@@ -49,6 +51,7 @@ func NewKeeper(
 		accountKeeper:    ak,
 		bankKeeper:       bk,
 		distrKeeper:      dk,
+		stakingKeeper:    sk,
 		feeCollectorName: feeCollectorName,
 	}
 }

@@ -20,10 +20,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 
-	"github.com/tharsis/evmos/x/epochs/client/cli"
-	"github.com/tharsis/evmos/x/epochs/keeper"
-	"github.com/tharsis/evmos/x/epochs/simulation"
-	"github.com/tharsis/evmos/x/epochs/types"
+	"github.com/tharsis/evmos/v4/x/epochs/client/cli"
+	"github.com/tharsis/evmos/v4/x/epochs/keeper"
+	"github.com/tharsis/evmos/v4/x/epochs/types"
 )
 
 var (
@@ -54,11 +53,11 @@ func (AppModuleBasic) Name() string {
 func (AppModuleBasic) RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {}
 
 // RegisterInterfaces registers the module's interface types
-func (a AppModuleBasic) RegisterInterfaces(reg cdctypes.InterfaceRegistry) {}
+func (AppModuleBasic) RegisterInterfaces(_ cdctypes.InterfaceRegistry) {}
 
 // DefaultGenesis returns the epochs module's default genesis state.
 func (AppModuleBasic) DefaultGenesis(cdc codec.JSONCodec) json.RawMessage {
-	return cdc.MustMarshalJSON(types.DefaultGenesis())
+	return cdc.MustMarshalJSON(types.DefaultGenesisState())
 }
 
 // ValidateGenesis performs genesis state validation for the epochs module.
@@ -82,7 +81,7 @@ func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *r
 }
 
 // GetTxCmd returns the epochs module's root tx command.
-func (a AppModuleBasic) GetTxCmd() *cobra.Command {
+func (AppModuleBasic) GetTxCmd() *cobra.Command {
 	return nil
 }
 
@@ -115,9 +114,14 @@ func (am AppModule) Name() string {
 	return am.AppModuleBasic.Name()
 }
 
+// NewHandler returns nil inflation module doesn't expose tx gRPC endpoints
+func (am AppModule) NewHandler() sdk.Handler {
+	return nil
+}
+
 // Route returns the epochs module's message routing key.
 func (am AppModule) Route() sdk.Route {
-	return sdk.NewRoute(types.RouterKey, NewHandler(am.keeper))
+	return sdk.NewRoute(types.RouterKey, am.NewHandler())
 }
 
 // QuerierRoute returns the epochs module's query routing key.
@@ -169,19 +173,17 @@ func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.Val
 
 // AppModuleSimulation functions
 
-// GenerateGenesisState creates a randomized GenState of the pool-incentives module.
-func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
-	simulation.RandomizedGenState(simState)
-}
+// GenerateGenesisState creates a randomized GenState of theepochs module.
+func (AppModule) GenerateGenesisState(simState *module.SimulationState) {}
 
 // ProposalContents doesn't return any content functions for governance proposals.
 func (AppModule) ProposalContents(simState module.SimulationState) []simtypes.WeightedProposalContent {
-	return nil
+	return []simtypes.WeightedProposalContent{}
 }
 
-// RandomizedParams creates randomized pool-incentives param changes for the simulator.
+// RandomizedParams creates randomizedepochs param changes for the simulator.
 func (AppModule) RandomizedParams(r *rand.Rand) []simtypes.ParamChange {
-	return nil
+	return []simtypes.ParamChange{}
 }
 
 // RegisterStoreDecoder registers a decoder for supply module's types
@@ -190,7 +192,7 @@ func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 
 // WeightedOperations returns the all the gov module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	return nil // TODO
+	return []simtypes.WeightedOperation{}
 }
 
 // ConsensusVersion implements AppModule/ConsensusVersion.

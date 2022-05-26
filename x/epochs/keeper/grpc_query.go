@@ -9,13 +9,16 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/tharsis/evmos/x/epochs/types"
+	"github.com/tharsis/evmos/v4/x/epochs/types"
 )
 
 var _ types.QueryServer = Keeper{}
 
 // EpochInfos provide running epochInfos
-func (k Keeper) EpochInfos(c context.Context, req *types.QueryEpochsInfoRequest) (*types.QueryEpochsInfoResponse, error) {
+func (k Keeper) EpochInfos(
+	c context.Context,
+	req *types.QueryEpochsInfoRequest,
+) (*types.QueryEpochsInfoResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "empty request")
 	}
@@ -44,7 +47,10 @@ func (k Keeper) EpochInfos(c context.Context, req *types.QueryEpochsInfoRequest)
 }
 
 // CurrentEpoch provides current epoch of specified identifier
-func (k Keeper) CurrentEpoch(c context.Context, req *types.QueryCurrentEpochRequest) (*types.QueryCurrentEpochResponse, error) {
+func (k Keeper) CurrentEpoch(
+	c context.Context,
+	req *types.QueryCurrentEpochRequest,
+) (*types.QueryCurrentEpochResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "empty request")
 	}

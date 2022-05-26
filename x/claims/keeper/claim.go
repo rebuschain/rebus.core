@@ -4,99 +4,24 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/tharsis/evmos/x/claims/types"
+	"github.com/tharsis/evmos/v4/x/claims/types"
 )
 
-// GetClaimableAmountForAction returns claimable amount for a specific action done by an address
-func (k Keeper) GetClaimableAmountForAction(
+// ClaimCoinsForAction removes the claimable amount entry from a claims record
+// and transfers it to the user's account
+func (k Keeper) ClaimCoinsForAction(
 	ctx sdk.Context,
 	addr sdk.AccAddress,
 	claimsRecord types.ClaimsRecord,
 	action types.Action,
 	params types.Params,
-) sdk.Int {
-	// return zero if there are no coins to claim
-	if claimsRecord.InitialClaimableAmount.IsNil() || claimsRecord.InitialClaimableAmount.IsZero() {
-		return sdk.ZeroInt()
-	}
-
-	airdropEndTime := params.AirdropEndTime()
-
-	// Safety check: the entire airdrop has completed
-	// NOTE: This shouldn't occur since at the end of the airdrop, the EnableClaims
-	// param is disabled.
-	if ctx.BlockTime().After(airdropEndTime) {
-		return sdk.ZeroInt()
-	}
-
-	if claimsRecord.HasClaimedAction(action) {
-		return sdk.ZeroInt()
-	}
-
-	// NOTE: use len(actions)-1 we don't consider the Unspecified Action
-	initialClaimablePerAction := claimsRecord.InitialClaimableAmount.QuoRaw(int64(len(types.Action_name) - 1))
-
-	decayStartTime := params.DecayStartTime()
-	// claim amount is the full amount if the elapsed time is before or equal
-	// the decay start time
-	if !ctx.BlockTime().After(decayStartTime) {
-		return initialClaimablePerAction
-	}
-
-	// calculate the claimable percent based on the elapsed time since the decay period started
-
-	elapsedDecay := ctx.BlockTime().Sub(decayStartTime)
-
-	elapsedDecayRatio := sdk.NewDec(elapsedDecay.Nanoseconds()).QuoInt64(params.DurationOfDecay.Nanoseconds())
-
-	// claimable percent is (1 - elapsed decay) x 100
-
-	// NOTE: the idea is that if you claim early in the decay period, you should
-	// be entitled to more coins than if you claim at the end of it.
-	claimableRatio := sdk.OneDec().Sub(elapsedDecayRatio)
-
-	// calculate the claimable coins, while rounding the decimals
-	claimableCoins := initialClaimablePerAction.ToDec().Mul(claimableRatio).RoundInt()
-	return claimableCoins
-}
-
-// GetUserTotalClaimable returns claimable amount for a specific action done by an address
-func (k Keeper) GetUserTotalClaimable(ctx sdk.Context, addr sdk.AccAddress) sdk.Int {
-	totalClaimable := sdk.ZeroInt()
-
-	claimsRecord, found := k.GetClaimsRecord(ctx, addr)
-	if !found {
-		return sdk.ZeroInt()
-	}
-
-	params := k.GetParams(ctx)
-
-	actions := []types.Action{types.ActionVote, types.ActionDelegate, types.ActionEVM, types.ActionIBCTransfer}
-
-	for _, action := range actions {
-		claimableForAction := k.GetClaimableAmountForAction(ctx, addr, claimsRecord, action, params)
-		totalClaimable = totalClaimable.Add(claimableForAction)
-	}
-
-	return totalClaimable
-}
-
-// ClaimCoinsForAction remove claimable amount entry and transfer it to user's account
-func (k Keeper) ClaimCoinsForAction(ctx sdk.Context, addr sdk.AccAddress, action types.Action) (sdk.Int, error) {
+) (sdk.Int, error) {
 	if action == types.ActionUnspecified || action > types.ActionIBCTransfer {
 		return sdk.ZeroInt(), sdkerrors.Wrapf(types.ErrInvalidAction, "%d", action)
 	}
 
-	params := k.GetParams(ctx)
-
-	// If we are before the start time or claims are disabled, do nothing.
-	if !params.EnableClaims || ctx.BlockTime().Before(params.AirdropStartTime) {
-		return sdk.ZeroInt(), nil
-	}
-
-	claimsRecord, found := k.GetClaimsRecord(ctx, addr)
-	if !found {
-		// return nil if not claim record found to avoid panics
+	// If we are before the start time, after end time, or claims are disabled, do nothing.
+	if !params.IsClaimsActive(ctx.BlockTime()) {
 		return sdk.ZeroInt(), nil
 	}
 
@@ -105,19 +30,29 @@ func (k Keeper) ClaimCoinsForAction(ctx sdk.Context, addr sdk.AccAddress, action
 		return sdk.ZeroInt(), nil
 	}
 
-	claimableAmount := k.GetClaimableAmountForAction(ctx, addr, claimsRecord, action, params)
+	claimableAmount, remainderAmount := k.GetClaimableAmountForAction(ctx, claimsRecord, action, params)
 
 	if claimableAmount.IsZero() {
 		return sdk.ZeroInt(), nil
 	}
 
-	claimedCoins := sdk.Coins{{Denom: params.ClaimsDenom, Amount: claimableAmount}}
+	claimedCoins := sdk.Coins{sdk.Coin{Denom: params.ClaimsDenom, Amount: claimableAmount}}
+	remainderCoins := sdk.Coins{sdk.Coin{Denom: params.ClaimsDenom, Amount: remainderAmount}}
 
 	if err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, addr, claimedCoins); err != nil {
 		return sdk.ZeroInt(), err
 	}
 
-	claimsRecord.ClaimAction(action)
+	// fund community pool if remainder is not 0
+	if !remainderAmount.IsZero() {
+		escrowAddr := k.GetModuleAccountAddress()
+
+		if err := k.distrKeeper.FundCommunityPool(ctx, remainderCoins, escrowAddr); err != nil {
+			return sdk.ZeroInt(), err
+		}
+	}
+
+	claimsRecord.MarkClaimed(action)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
@@ -128,11 +63,165 @@ func (k Keeper) ClaimCoinsForAction(ctx sdk.Context, addr sdk.AccAddress, action
 		),
 	})
 
-	if claimsRecord.HasClaimedAll() {
-		k.DeleteClaimsRecord(ctx, addr)
-	} else {
-		k.SetClaimsRecord(ctx, addr, claimsRecord)
-	}
+	k.SetClaimsRecord(ctx, addr, claimsRecord)
+
+	k.Logger(ctx).Info(
+		"claimed action",
+		"address", addr.String(),
+		"action", action.String(),
+	)
 
 	return claimableAmount, nil
+}
+
+// MergeClaimsRecords merges two independent claims records (sender and
+// recipient) into a new instance by summing up the initial claimable amounts
+// from both records.
+
+// This method additionally:
+//  - Always claims the IBC action, assuming both record haven't claimed it.
+//  - Marks an action as claimed for the new instance by performing an XOR operation between the 2 provided records: `merged completed action = sender completed action XOR recipient completed action`
+func (k Keeper) MergeClaimsRecords(
+	ctx sdk.Context,
+	recipient sdk.AccAddress,
+	senderClaimsRecord,
+	recipientClaimsRecord types.ClaimsRecord,
+	params types.Params,
+) (mergedRecord types.ClaimsRecord, err error) {
+	claimedAmt := sdk.ZeroInt()
+	remainderAmt := sdk.ZeroInt()
+
+	// new total is the sum of the sender and recipient claims records amounts
+	totalClaimableAmt := senderClaimsRecord.InitialClaimableAmount.Add(recipientClaimsRecord.InitialClaimableAmount)
+	mergedRecord = types.NewClaimsRecord(totalClaimableAmt)
+
+	// iterate over all the available actions and claim the amount if
+	// the recipient or sender has completed an action but the other hasn't
+	actions := []types.Action{types.ActionVote, types.ActionDelegate, types.ActionEVM, types.ActionIBCTransfer}
+	for _, action := range actions {
+
+		// Safety check: the sender record cannot have any claimed actions, as
+		//  - the sender is not an evmos address and can't claim vote, delegation or evm actions
+		//  - the first attempt to perform an ibc callback from the senders account will merge/migrate the entire claims record
+		if senderClaimsRecord.HasClaimedAction(action) {
+			return types.ClaimsRecord{}, sdkerrors.Wrapf(sdkerrors.ErrNotSupported, "non-evmos sender must not have claimed action: %v", action)
+		}
+
+		recipientCompleted := recipientClaimsRecord.HasClaimedAction(action)
+
+		if recipientCompleted {
+			// claim action for sender since the recipient completed it
+			amt, remainder := k.GetClaimableAmountForAction(ctx, senderClaimsRecord, action, params)
+			claimedAmt = claimedAmt.Add(amt)
+			remainderAmt = remainderAmt.Add(remainder)
+			mergedRecord.MarkClaimed(action)
+		} else {
+			// Neither sender or recipient completed the action.
+			if action != types.ActionIBCTransfer {
+				// No-op if the action is not IBC transfer
+				continue
+			}
+
+			// claim IBC action for both sender and recipient
+			amtIBCRecipient, remainderRecipient := k.GetClaimableAmountForAction(ctx, recipientClaimsRecord, action, params)
+			amtIBCSender, remainderSender := k.GetClaimableAmountForAction(ctx, senderClaimsRecord, action, params)
+			claimedAmt = claimedAmt.Add(amtIBCRecipient).Add(amtIBCSender)
+			remainderAmt = remainderAmt.Add(remainderRecipient).Add(remainderSender)
+			mergedRecord.MarkClaimed(action)
+		}
+	}
+
+	// safety check to prevent error while sending coins from the module escrow balance to the recipient
+	if claimedAmt.IsZero() {
+		return mergedRecord, nil
+	}
+
+	claimedCoins := sdk.Coins{sdk.Coin{Denom: params.ClaimsDenom, Amount: claimedAmt}}
+	if err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, recipient, claimedCoins); err != nil {
+		return types.ClaimsRecord{}, err
+	}
+
+	remainderCoins := sdk.Coins{sdk.Coin{Denom: params.ClaimsDenom, Amount: remainderAmt}}
+	// short-circuit: don't fund community pool if remainder is 0
+	if remainderCoins.IsZero() {
+		return mergedRecord, nil
+	}
+
+	escrowAddr := k.GetModuleAccountAddress()
+	if err := k.distrKeeper.FundCommunityPool(ctx, remainderCoins, escrowAddr); err != nil {
+		return types.ClaimsRecord{}, err
+	}
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			types.EventTypeMergeClaimsRecords,
+			sdk.NewAttribute(types.AttributeKeyRecipient, recipient.String()),
+			sdk.NewAttribute(types.AttributeKeyClaimedCoins, claimedCoins.String()),
+			sdk.NewAttribute(types.AttributeKeyFundCommunityPoolCoins, remainderCoins.String()),
+		),
+	})
+
+	return mergedRecord, nil
+}
+
+// GetClaimableAmountForAction returns claimable amount for a specific action
+// done by an address
+// returns zero if airdrop didn't start, isn't enabled or has finished
+func (k Keeper) GetClaimableAmountForAction(
+	ctx sdk.Context,
+	claimsRecord types.ClaimsRecord,
+	action types.Action,
+	params types.Params,
+) (claimableCoins, remainder sdk.Int) {
+	// check if the entire airdrop has completed. This shouldn't occur since at
+	// the end of the airdrop, the EnableClaims param is disabled.
+	if !params.IsClaimsActive(ctx.BlockTime()) {
+		return sdk.ZeroInt(), sdk.ZeroInt()
+	}
+
+	return k.ClaimableAmountForAction(ctx, claimsRecord, action, params)
+}
+
+// ClaimableAmountForAction returns claimable amount for a specific action
+// done by an address
+func (k Keeper) ClaimableAmountForAction(
+	ctx sdk.Context,
+	claimsRecord types.ClaimsRecord,
+	action types.Action,
+	params types.Params,
+) (claimableCoins, remainder sdk.Int) {
+	// return zero if there are no coins to claim
+	if claimsRecord.InitialClaimableAmount.IsNil() || claimsRecord.InitialClaimableAmount.IsZero() {
+		return sdk.ZeroInt(), sdk.ZeroInt()
+	}
+
+	// check if action already completed
+	if claimsRecord.HasClaimedAction(action) {
+		return sdk.ZeroInt(), sdk.ZeroInt()
+	}
+
+	// NOTE: use len(actions)-1 as we don't consider the Unspecified Action
+	actionsCount := int64(len(types.Action_name) - 1)
+	initialClaimablePerAction := claimsRecord.InitialClaimableAmount.QuoRaw(actionsCount)
+
+	// return full claim amount if the elapsed time <= decay start time
+	decayStartTime := params.DecayStartTime()
+	if !ctx.BlockTime().After(decayStartTime) {
+		return initialClaimablePerAction, sdk.ZeroInt()
+	}
+
+	// Decrease claimable amount if elapsed time > decay start time.
+	// The decrease is calculated proportionally to how much elapsedDeacay period
+	// has passed. If you claim early in the decay period, you are entitled to
+	// more coins than if you claim at the end of it.
+	//
+	// Claimable percent = (1 - elapsed decay) x 100
+	elapsedDecay := ctx.BlockTime().Sub(decayStartTime)
+	elapsedDecayRatio := sdk.NewDec(elapsedDecay.Nanoseconds()).QuoInt64(params.DurationOfDecay.Nanoseconds())
+	claimableRatio := sdk.OneDec().Sub(elapsedDecayRatio)
+
+	// calculate the claimable coins, while rounding the decimals
+	claimableCoins = initialClaimablePerAction.ToDec().Mul(claimableRatio).RoundInt()
+	remainder = initialClaimablePerAction.Sub(claimableCoins)
+	return claimableCoins, remainder
 }

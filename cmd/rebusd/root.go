@@ -39,12 +39,12 @@ import (
 	srvflags "github.com/tharsis/ethermint/server/flags"
 
 	"github.com/tharsis/ethermint/crypto/hd"
-	"github.com/tharsis/evmos/app"
-	cmdcfg "github.com/tharsis/evmos/cmd/config"
+	"github.com/tharsis/evmos/v4/app"
+	cmdcfg "github.com/tharsis/evmos/v4/cmd/config"
 )
 
 const (
-	EnvPrefix = "EVMOS"
+	EnvPrefix = "REBUS"
 )
 
 // NewRootCmd creates a new root command for evmosd. It is called once in the
@@ -86,7 +86,6 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 				return err
 			}
 
-			// TODO: define our own token
 			customAppTemplate, customAppConfig := initAppConfig()
 
 			return sdkserver.InterceptConfigsPreRunHandler(cmd, customAppTemplate, customAppConfig)
@@ -104,7 +103,7 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 			InitCmd(app.ModuleBasics, app.DefaultNodeHome),
 		),
 		genutilcli.CollectGenTxsCmd(banktypes.GenesisBalancesIterator{}, app.DefaultNodeHome),
-		genutilcli.MigrateGenesisCmd(),
+		MigrateGenesisCmd(),
 		genutilcli.GenTxCmd(app.ModuleBasics, encodingConfig.TxConfig, banktypes.GenesisBalancesIterator{}, app.DefaultNodeHome),
 		genutilcli.ValidateGenesisCmd(app.ModuleBasics),
 		AddGenesisAccountCmd(app.DefaultNodeHome),

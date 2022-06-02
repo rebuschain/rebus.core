@@ -51,11 +51,17 @@ func BeginBlocker(ctx sdk.Context, k keeper.Keeper) {
 		panic(err)
 	}
 
-	// send the minted coins to the fee collector account
-	err = k.AddCollectedFees(ctx, mintedCoins)
+	err = k.DistributeMintedCoin(ctx, mintedCoin)
 	if err != nil {
 		panic(err)
 	}
+
+	// send the minted coins to the fee collector account
+	/*
+		err = k.AddCollectedFees(ctx, mintedCoins)
+		if err != nil {
+			panic(err)
+		}*/
 
 	if mintedCoin.Amount.IsInt64() {
 		defer telemetry.ModuleSetGauge(types.ModuleName, float32(mintedCoin.Amount.Int64()), "minted_tokens")

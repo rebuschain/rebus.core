@@ -115,6 +115,47 @@ func (k Keeper) MintCoins(ctx sdk.Context, newCoins sdk.Coins) error {
 	return k.bankKeeper.MintCoins(ctx, types.ModuleName, newCoins)
 }
 
+// GetProportions gets the balance of the `MintedDenom` from minted coins and returns coins according to the `AllocationRatio`.
+func (k Keeper) GetProportions(ctx sdk.Context, mintedCoin sdk.Coin, ratio sdk.Dec) sdk.Coin {
+	return sdk.NewCoin(mintedCoin.Denom, mintedCoin.Amount.ToDec().Mul(ratio).TruncateInt())
+}
+
+func (k Keeper) DistributeMintedCoin(ctx sdk.Context, mintedCoin sdk.Coin) error {
+
+	// move to const
+	posPart, err := sdk.NewDecFromStr("0.72")
+	if err != nil {
+		return err
+	}
+
+	posRewardCoins := sdk.NewCoins(k.GetProportions(ctx, mintedCoin, posPart))
+	err = k.bankKeeper.SendCoinsFromModuleToModule(ctx, types.ModuleName, k.feeCollectorName, posRewardCoins)
+	if err != nil {
+		return err
+	}
+
+	// treasury change and move to const
+	treasuryPart, err := sdk.NewDecFromStr("0.28")
+	if err != nil {
+		return err
+	}
+
+	// test treasury address
+	treasuryAddress := "rebus1kr9etd0k4se82regqrxkhjvpstl2u9yd2cptp4"
+	treasuryAddr, err := sdk.AccAddressFromBech32(treasuryAddress)
+	if err != nil {
+		return err
+	}
+
+	treasuryCoins := sdk.NewCoins(k.GetProportions(ctx, mintedCoin, treasuryPart))
+	err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, treasuryAddr, treasuryCoins)
+	if err != nil {
+		return err
+	}
+
+	return err
+}
+
 // AddCollectedFees implements an alias call to the underlying supply keeper's
 // AddCollectedFees to be used in BeginBlocker.
 func (k Keeper) AddCollectedFees(ctx sdk.Context, fees sdk.Coins) error {

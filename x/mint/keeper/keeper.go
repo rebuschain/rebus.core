@@ -16,6 +16,8 @@ type Keeper struct {
 	paramSpace       paramtypes.Subspace
 	stakingKeeper    types.StakingKeeper
 	bankKeeper       types.BankKeeper
+	accountKeeper    types.AccountKeeper
+	distrKeeper      types.DistrKeeper
 	feeCollectorName string
 }
 
@@ -23,6 +25,7 @@ type Keeper struct {
 func NewKeeper(
 	cdc codec.BinaryCodec, key sdk.StoreKey, paramSpace paramtypes.Subspace,
 	sk types.StakingKeeper, ak types.AccountKeeper, bk types.BankKeeper,
+	dk types.DistrKeeper,
 	feeCollectorName string,
 ) Keeper {
 	// ensure mint module account is set
@@ -41,6 +44,8 @@ func NewKeeper(
 		paramSpace:       paramSpace,
 		stakingKeeper:    sk,
 		bankKeeper:       bk,
+		accountKeeper:    ak,
+		distrKeeper:      dk,
 		feeCollectorName: feeCollectorName,
 	}
 }
@@ -115,43 +120,66 @@ func (k Keeper) MintCoins(ctx sdk.Context, newCoins sdk.Coins) error {
 	return k.bankKeeper.MintCoins(ctx, types.ModuleName, newCoins)
 }
 
+//
+func (k Keeper) getAddress(ctx sdk.Context, listAddress []string) (sdk.AccAddress, error) {
+	strAddress := listAddress[0]
+	address, err := sdk.AccAddressFromBech32(strAddress)
+	if err != nil {
+		return nil, err
+	}
+	return address, nil
+}
+
 // GetProportions gets the balance of the `MintedDenom` from minted coins and returns coins according to the `AllocationRatio`.
 func (k Keeper) GetProportions(ctx sdk.Context, mintedCoin sdk.Coin, ratio sdk.Dec) sdk.Coin {
 	return sdk.NewCoin(mintedCoin.Denom, mintedCoin.Amount.ToDec().Mul(ratio).TruncateInt())
 }
 
 func (k Keeper) DistributeMintedCoin(ctx sdk.Context, mintedCoin sdk.Coin) error {
-
-	// move to const
-	posPart, err := sdk.NewDecFromStr("0.72")
+	posRewardCoins := sdk.NewCoins(k.GetProportions(ctx, mintedCoin, types.PosRewardProportion))
+	err := k.bankKeeper.SendCoinsFromModuleToModule(ctx, types.ModuleName, k.feeCollectorName, posRewardCoins)
 	if err != nil {
 		return err
 	}
 
-	posRewardCoins := sdk.NewCoins(k.GetProportions(ctx, mintedCoin, posPart))
-	err = k.bankKeeper.SendCoinsFromModuleToModule(ctx, types.ModuleName, k.feeCollectorName, posRewardCoins)
+	communityRewardCoins := sdk.NewCoins(k.GetProportions(ctx, mintedCoin, types.CommunityProportion))
+	k.distrKeeper.FundCommunityPool(ctx, communityRewardCoins, k.accountKeeper.GetModuleAddress(types.ModuleName))
 	if err != nil {
 		return err
 	}
 
-	// treasury change and move to const
-	treasuryPart, err := sdk.NewDecFromStr("0.28")
+	incentiveAddress, err := k.getAddress(ctx, types.IncentiveAddressList[:])
+	if err != nil {
+		return err
+	}
+	incentiveCoins := sdk.NewCoins(k.GetProportions(ctx, mintedCoin, types.IncentiveProportion))
+	err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, incentiveAddress, incentiveCoins)
 	if err != nil {
 		return err
 	}
 
-	// test treasury address
-	treasuryAddress := "rebus1kr9etd0k4se82regqrxkhjvpstl2u9yd2cptp4"
-	treasuryAddr, err := sdk.AccAddressFromBech32(treasuryAddress)
+	ethicalAddress, err := k.getAddress(ctx, types.EthicalAddressList[:])
+	if err != nil {
+		return err
+	}
+	ethicalCoins := sdk.NewCoins(k.GetProportions(ctx, mintedCoin, types.EthicalProportion))
+	err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, ethicalAddress, ethicalCoins)
 	if err != nil {
 		return err
 	}
 
-	treasuryCoins := sdk.NewCoins(k.GetProportions(ctx, mintedCoin, treasuryPart))
-	err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, treasuryAddr, treasuryCoins)
+	treasuryAddress, err := k.getAddress(ctx, types.TreasuryAddressList[:])
 	if err != nil {
 		return err
 	}
+	treasuryCoins := sdk.NewCoins(k.GetProportions(ctx, mintedCoin, types.TreasuryProportion))
+	err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, treasuryAddress, treasuryCoins)
+	if err != nil {
+		return err
+	}
+
+	//change := sdk.NewCoins(mintedCoin).Sub(posRewardCoins).Sub(communityRewardCoins).Sub(incentiveCoins).Sub(ethicalCoins).Sub(treasuryCoins)
+	//
 
 	return err
 }

@@ -29,6 +29,11 @@ type BankKeeper interface {
 	MintCoins(ctx sdk.Context, name string, amt sdk.Coins) error
 }
 
+// DistrKeeper defines the contract needed to be fulfilled for distribution keeper.
+type DistrKeeper interface {
+	FundCommunityPool(ctx sdk.Context, amount sdk.Coins, sender sdk.AccAddress) error
+}
+
 // NB: I may have introduced a bug here.  Please verify that this is functioning as intended. - Jacob
 // NB: It compiles now but something is not right here.
 // NB: SupplyI left the bank module in 0.43.0

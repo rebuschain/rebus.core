@@ -23,20 +23,27 @@ const (
 	QueryAnnualProvisions = "annual_provisions"
 
 	// Ratio for block reward distribution
-	PosRatio = "0.75"
+	PosRatio = "0.72"
 	TrRatio  = "0.11"
-	LiqRatio = "0.04"
+	IncRatio = "0.04"
 	EtRatio  = "0.08"
+	ComRatio = "0.05"
 )
+
+var TreasuryAddressList = [1]string{"rebus1kr9etd0k4se82regqrxkhjvpstl2u9yd2cptp4"}
+var EthicalAddressList = [1]string{"rebus1l4l243c8mee7kh6spawlz6zzad745j2vlrdmdq"}
+var IncentiveAddressList = [1]string{"rebus1hzm429073g3mumg2dt3v67sfsnnmshq6nrufy2"}
 
 var PosRewardProportion sdk.Dec
 var TreasuryProportion sdk.Dec
-var LiquidityProportion sdk.Dec
+var IncentiveProportion sdk.Dec
 var EthicalProportion sdk.Dec
+var CommunityProportion sdk.Dec
 
 func init() {
 	PosRewardProportion, _ = sdk.NewDecFromStr(PosRatio)
 	TreasuryProportion, _ = sdk.NewDecFromStr(TrRatio)
-	LiquidityProportion, _ = sdk.NewDecFromStr(LiqRatio)
+	IncentiveProportion, _ = sdk.NewDecFromStr(IncRatio)
 	EthicalProportion, _ = sdk.NewDecFromStr(EtRatio)
+	CommunityProportion, _ = sdk.NewDecFromStr(ComRatio)
 }

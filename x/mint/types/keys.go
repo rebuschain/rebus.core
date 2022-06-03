@@ -2,6 +2,7 @@ package types
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	ethermint "github.com/tharsis/ethermint/types"
 )
 
 // MinterKey is the key to use for the keeper store.
@@ -39,6 +40,8 @@ var TreasuryProportion sdk.Dec
 var IncentiveProportion sdk.Dec
 var EthicalProportion sdk.Dec
 var CommunityProportion sdk.Dec
+
+var PosAllocation = sdk.NewInt(585_000_000).Mul(ethermint.PowerReduction)
 
 func init() {
 	PosRewardProportion, _ = sdk.NewDecFromStr(PosRatio)

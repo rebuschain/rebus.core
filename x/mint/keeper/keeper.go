@@ -178,7 +178,7 @@ func (k Keeper) DistributeMintedCoin(ctx sdk.Context, mintedCoin sdk.Coin) error
 		return err
 	}
 
-	//change := sdk.NewCoins(mintedCoin).Sub(posRewardCoins).Sub(communityRewardCoins).Sub(incentiveCoins).Sub(ethicalCoins).Sub(treasuryCoins)
+	// change := sdk.NewCoins(mintedCoin).Sub(posRewardCoins).Sub(communityRewardCoins).Sub(incentiveCoins).Sub(ethicalCoins).Sub(treasuryCoins)
 	//
 
 	return err

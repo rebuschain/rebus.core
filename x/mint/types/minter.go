@@ -47,7 +47,7 @@ func ValidateMinter(minter Minter) error {
 // PhaseInflationRate returns the inflation rate by phase.
 func (m Minter) PhaseInflationRate(phase uint64) sdk.Dec {
 	if 1 == 1 {
-		return sdk.NewDecWithPrec(60, 2)
+		return sdk.NewDecWithPrec(25, 2)
 		// return sdk.ZeroDec()
 	}
 	switch {

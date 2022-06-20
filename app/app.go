@@ -127,9 +127,6 @@ import (
 	erc20client "github.com/tharsis/evmos/v4/x/erc20/client"
 	erc20keeper "github.com/tharsis/evmos/v4/x/erc20/keeper"
 	erc20types "github.com/tharsis/evmos/v4/x/erc20/types"
-	"github.com/tharsis/evmos/v4/x/fees"
-	feeskeeper "github.com/tharsis/evmos/v4/x/fees/keeper"
-	feestypes "github.com/tharsis/evmos/v4/x/fees/types"
 
 	"github.com/tharsis/evmos/v4/x/mint"
 	mintkeeper "github.com/tharsis/evmos/v4/x/mint/keeper"
@@ -205,8 +202,6 @@ var (
 		// incentives.AppModuleBasic{},
 		epochs.AppModuleBasic{},
 		claims.AppModuleBasic{},
-		// recovery.AppModuleBasic{},
-		fees.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -289,7 +284,6 @@ type Evmos struct {
 	// IncentivesKeeper incentiveskeeper.Keeper
 	EpochsKeeper epochskeeper.Keeper
 	// RecoveryKeeper *recoverykeeper.Keeper
-	FeesKeeper feeskeeper.Keeper
 
 	// the module manager
 	mm *module.Manager
@@ -349,12 +343,10 @@ func NewEvmos(
 		// incentivestypes.StoreKey,
 		epochstypes.StoreKey,
 		claimstypes.StoreKey,
-		// vestingtypes.StoreKey,
-		feestypes.StoreKey,
 	)
 
 	// Add the EVM transient store key
-	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey, evmtypes.TransientKey)
+	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey, evmtypes.TransientKey, feemarkettypes.TransientKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
 	app := &Evmos{
@@ -415,8 +407,13 @@ func NewEvmos(
 	tracer := cast.ToString(appOpts.Get(srvflags.EVMTracer))
 
 	// Create Ethermint keepers
+	/*
+		app.FeeMarketKeeper = feemarketkeeper.NewKeeper(
+			appCodec, keys[feemarkettypes.StoreKey], app.GetSubspace(feemarkettypes.ModuleName),
+		)
+	*/
 	app.FeeMarketKeeper = feemarketkeeper.NewKeeper(
-		appCodec, keys[feemarkettypes.StoreKey], app.GetSubspace(feemarkettypes.ModuleName),
+		appCodec, app.GetSubspace(feemarkettypes.ModuleName), keys[feemarkettypes.StoreKey], tkeys[feemarkettypes.TransientKey],
 	)
 
 	// Create Ethermint keepers
@@ -488,12 +485,6 @@ func NewEvmos(
 		)
 	*/
 
-	app.FeesKeeper = feeskeeper.NewKeeper(
-		keys[feestypes.StoreKey], appCodec, app.GetSubspace(feestypes.ModuleName),
-		app.BankKeeper, app.EvmKeeper,
-		authtypes.FeeCollectorName,
-	)
-
 	epochsKeeper := epochskeeper.NewKeeper(appCodec, keys[epochstypes.StoreKey])
 
 	app.EpochsKeeper = *epochsKeeper.SetHooks(
@@ -513,9 +504,6 @@ func NewEvmos(
 	app.EvmKeeper = app.EvmKeeper.SetHooks(
 		evmkeeper.NewMultiEvmHooks(
 			app.Erc20Keeper.Hooks(),
-			// app.IncentivesKeeper.Hooks(),
-			app.FeesKeeper.Hooks(),
-			app.ClaimsKeeper.Hooks(),
 		),
 	)
 
@@ -618,8 +606,6 @@ func NewEvmos(
 		// incentives.NewAppModule(app.IncentivesKeeper, app.AccountKeeper),
 		epochs.NewAppModule(appCodec, app.EpochsKeeper),
 		claims.NewAppModule(appCodec, *app.ClaimsKeeper),
-		// recovery.NewAppModule(*app.RecoveryKeeper),
-		fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -652,12 +638,8 @@ func NewEvmos(
 		feegrant.ModuleName,
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
-		// inflationtypes.ModuleName,
 		erc20types.ModuleName,
 		claimstypes.ModuleName,
-		// incentivestypes.ModuleName,
-		// recoverytypes.ModuleName,
-		feestypes.ModuleName,
 	)
 
 	// NOTE: fee market module must go last in order to retrieve the block gas used.
@@ -689,9 +671,6 @@ func NewEvmos(
 		vestingtypes.ModuleName,
 		// inflationtypes.ModuleName,
 		erc20types.ModuleName,
-		// incentivestypes.ModuleName,
-		// recoverytypes.ModuleName,
-		feestypes.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -716,7 +695,7 @@ func NewEvmos(
 		evmtypes.ModuleName,
 		// NOTE: fees need to be initialized before genutil module:
 		// gentx transactions use MinGasPriceDecorator.AnteHandle
-		feestypes.ModuleName,
+		feemarkettypes.ModuleName,
 		genutiltypes.ModuleName,
 		evidencetypes.ModuleName,
 		ibctransfertypes.ModuleName,
@@ -724,8 +703,6 @@ func NewEvmos(
 		feegrant.ModuleName,
 		paramstypes.ModuleName,
 		upgradetypes.ModuleName,
-		// Ethermint modules
-		feemarkettypes.ModuleName,
 		// Evmos modules
 		vestingtypes.ModuleName,
 		// inflationtypes.ModuleName,
@@ -792,7 +769,6 @@ func NewEvmos(
 		FeegrantKeeper:  app.FeeGrantKeeper,
 		IBCKeeper:       app.IBCKeeper,
 		FeeMarketKeeper: app.FeeMarketKeeper,
-		FeesKeeper:      app.FeesKeeper,
 		SignModeHandler: encodingConfig.TxConfig.SignModeHandler(),
 		SigGasConsumer:  SigVerificationGasConsumer,
 		Cdc:             appCodec,
@@ -1050,12 +1026,8 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(evmtypes.ModuleName)
 	paramsKeeper.Subspace(feemarkettypes.ModuleName)
 	// evmos subspaces
-	// paramsKeeper.Subspace(inflationtypes.ModuleName)
 	paramsKeeper.Subspace(erc20types.ModuleName)
 	paramsKeeper.Subspace(claimstypes.ModuleName)
-	// paramsKeeper.Subspace(incentivestypes.ModuleName)
-	// paramsKeeper.Subspace(recoverytypes.ModuleName)
-	paramsKeeper.Subspace(feestypes.ModuleName)
 	return paramsKeeper
 }
 

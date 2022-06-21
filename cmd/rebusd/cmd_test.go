@@ -27,7 +27,7 @@ func TestInitCmd(t *testing.T) {
 }
 
 func TestAddKeyLedgerCmd(t *testing.T) {
-	rootCmd, _ := evmosd.NewRootCmd()
+	rootCmd, _ := rebusd.NewRootCmd()
 	rootCmd.SetArgs([]string{
 		"keys",
 		"add",

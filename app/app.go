@@ -99,7 +99,6 @@ import (
 	// _ "github.com/tharsis/ethermint/client/docs/statik"
 	"github.com/tharsis/ethermint/encoding"
 
-	// "github.com/tharsis/ethermint/app/ante"
 	srvflags "github.com/tharsis/ethermint/server/flags"
 	ethermint "github.com/tharsis/ethermint/types"
 	"github.com/tharsis/ethermint/x/evm"
@@ -131,16 +130,6 @@ import (
 	"github.com/tharsis/evmos/v4/x/mint"
 	mintkeeper "github.com/tharsis/evmos/v4/x/mint/keeper"
 	minttypes "github.com/tharsis/evmos/v4/x/mint/types"
-	// incentivesclient "github.com/tharsis/evmos/v4/x/incentives/client"
-	// incentiveskeeper "github.com/tharsis/evmos/v4/x/incentives/keeper"
-	// incentivestypes "github.com/tharsis/evmos/v4/x/incentives/types"
-	// "github.com/tharsis/evmos/v4/x/inflation"
-	// inflationkeeper "github.com/tharsis/evmos/v4/x/inflation/keeper"
-	// inflationtypes "github.com/tharsis/evmos/v4/x/inflation/types"
-	// "github.com/tharsis/evmos/v4/x/recovery"
-	// recoverykeeper "github.com/tharsis/evmos/v4/x/recovery/keeper"
-	// recoverytypes "github.com/tharsis/evmos/v4/x/recovery/types"
-	// "github.com/tharsis/evmos/v4/x/vesting"
 )
 
 func init() {
@@ -765,13 +754,11 @@ func NewEvmos(
 		AccountKeeper:   app.AccountKeeper,
 		BankKeeper:      app.BankKeeper,
 		EvmKeeper:       app.EvmKeeper,
-		StakingKeeper:   app.StakingKeeper,
 		FeegrantKeeper:  app.FeeGrantKeeper,
 		IBCKeeper:       app.IBCKeeper,
 		FeeMarketKeeper: app.FeeMarketKeeper,
 		SignModeHandler: encodingConfig.TxConfig.SignModeHandler(),
 		SigGasConsumer:  SigVerificationGasConsumer,
-		Cdc:             appCodec,
 		MaxTxGasWanted:  maxGasWanted,
 	}
 
@@ -779,6 +766,7 @@ func NewEvmos(
 		panic(err)
 	}
 
+	// app.SetAnteHandler(ante.NewAnteHandler(options))
 	app.SetAnteHandler(ante.NewAnteHandler(options))
 	app.SetEndBlocker(app.EndBlocker)
 	app.setupUpgradeHandlers()

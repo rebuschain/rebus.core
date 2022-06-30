@@ -3,7 +3,6 @@ module github.com/tharsis/evmos/v4
 go 1.17
 
 require (
-	github.com/armon/go-metrics v0.4.0
 	github.com/cosmos/cosmos-sdk v0.45.5
 	github.com/cosmos/go-bip39 v1.0.0
 	github.com/cosmos/ibc-go/v3 v3.0.0
@@ -31,6 +30,7 @@ require (
 
 require (
 	github.com/allegro/bigcache v1.2.1 // indirect
+	github.com/armon/go-metrics v0.4.0 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
 )
 

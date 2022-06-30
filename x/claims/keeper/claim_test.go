@@ -14,8 +14,9 @@ import (
 	"github.com/tharsis/ethermint/crypto/ethsecp256k1"
 	"github.com/tharsis/ethermint/tests"
 	ethermint "github.com/tharsis/ethermint/types"
+
 	"github.com/tharsis/evmos/v4/testutil"
-	inflationtypes "github.com/tharsis/evmos/v4/x/inflation/types"
+	mint "github.com/tharsis/evmos/v4/x/mint/types"
 
 	"github.com/tharsis/evmos/v4/x/claims/types"
 )
@@ -250,7 +251,7 @@ func (suite *KeeperTestSuite) TestClaimCoinsForAction() {
 				// drain the module account funds to test error
 				addr := suite.app.ClaimsKeeper.GetModuleAccountAddress()
 				coins := suite.app.BankKeeper.GetAllBalances(suite.ctx, addr)
-				err := suite.app.BankKeeper.SendCoinsFromModuleToModule(suite.ctx, types.ModuleName, inflationtypes.ModuleName, coins)
+				err := suite.app.BankKeeper.SendCoinsFromModuleToModule(suite.ctx, types.ModuleName, mint.ModuleName, coins)
 				suite.Require().NoError(err)
 			},
 			types.NewClaimsRecord(sdk.NewInt(200)),

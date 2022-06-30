@@ -16,7 +16,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 
-	v3 "github.com/tharsis/evmos/v4/app/upgrades/v3"
+	// v0 "github.com/tharsis/evmos/v4/app/upgrades/v0"
 	"github.com/tharsis/evmos/v4/types"
 )
 
@@ -24,7 +24,7 @@ import (
 const FlagGenesisTime = "genesis-time"
 
 var migrationMap = genutiltypes.MigrationMap{
-	"v3": v3.MigrateGenesis, // migration to v3
+	// "v0": v0.MigrateGenesis, // migration to v3
 }
 
 // GetMigrationCallback returns a MigrationCallback for a given version.

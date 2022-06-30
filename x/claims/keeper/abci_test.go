@@ -11,7 +11,7 @@ import (
 
 	"github.com/tharsis/evmos/v4/testutil"
 	"github.com/tharsis/evmos/v4/x/claims/types"
-	vestingtypes "github.com/tharsis/evmos/v4/x/vesting/types"
+	//vestingtypes "github.com/tharsis/evmos/v4/x/vesting/types"
 )
 
 func (suite *KeeperTestSuite) TestEndBlock() {
@@ -99,22 +99,23 @@ func (suite *KeeperTestSuite) TestClawbackEmptyAccounts() {
 				suite.app.ClaimsKeeper.SetClaimsRecord(suite.ctx, addr, types.ClaimsRecord{})
 			},
 		},
-		{
-			"balance non zero, vesting account is ignored",
-			0,
-			func() {
-				bAcc := authtypes.NewBaseAccount(addr, nil, 0, 0)
-				funder := sdk.AccAddress(tests.GenerateAddress().Bytes())
-				coins := sdk.NewCoins(sdk.NewCoin("aevmos", sdk.NewInt(amount)))
+		/*
+			{
+				"balance non zero, vesting account is ignored",
+				0,
+				func() {
+					bAcc := authtypes.NewBaseAccount(addr, nil, 0, 0)
+					funder := sdk.AccAddress(tests.GenerateAddress().Bytes())
+					coins := sdk.NewCoins(sdk.NewCoin("aevmos", sdk.NewInt(amount)))
 
-				vestingAcc := vestingtypes.NewClawbackVestingAccount(bAcc, funder, coins, time.Now().UTC(), nil, nil)
-				suite.app.AccountKeeper.SetAccount(suite.ctx, vestingAcc)
+					vestingAcc := vestingtypes.NewClawbackVestingAccount(bAcc, funder, coins, time.Now().UTC(), nil, nil)
+					suite.app.AccountKeeper.SetAccount(suite.ctx, vestingAcc)
 
-				err := testutil.FundModuleAccount(suite.app.BankKeeper, suite.ctx, types.ModuleName, coins)
-				suite.Require().NoError(err)
-				suite.app.ClaimsKeeper.SetClaimsRecord(suite.ctx, addr, types.ClaimsRecord{})
-			},
-		},
+					err := testutil.FundModuleAccount(suite.app.BankKeeper, suite.ctx, types.ModuleName, coins)
+					suite.Require().NoError(err)
+					suite.app.ClaimsKeeper.SetClaimsRecord(suite.ctx, addr, types.ClaimsRecord{})
+				},
+			},*/
 		{
 			"balance non zero, base account",
 			amount,

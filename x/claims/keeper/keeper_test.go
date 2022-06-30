@@ -28,6 +28,7 @@ import (
 	evm "github.com/tharsis/ethermint/x/evm/types"
 	"github.com/tharsis/evmos/v4/app"
 	"github.com/tharsis/evmos/v4/testutil"
+
 	"github.com/tharsis/evmos/v4/x/claims/types"
 )
 

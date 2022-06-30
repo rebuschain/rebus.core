@@ -14,7 +14,7 @@ import (
 
 	"github.com/tharsis/evmos/v4/x/erc20/keeper"
 	"github.com/tharsis/evmos/v4/x/erc20/types"
-	inflationtypes "github.com/tharsis/evmos/v4/x/inflation/types"
+	mint "github.com/tharsis/evmos/v4/x/mint/types"
 )
 
 const (
@@ -73,7 +73,7 @@ func (suite *KeeperTestSuite) setupRegisterCoin() (banktypes.Metadata, *types.To
 		Display: cosmosTokenBase,
 	}
 
-	err := suite.app.BankKeeper.MintCoins(suite.ctx, inflationtypes.ModuleName, sdk.Coins{sdk.NewInt64Coin(validMetadata.Base, 1)})
+	err := suite.app.BankKeeper.MintCoins(suite.ctx, mint.ModuleName, sdk.Coins{sdk.NewInt64Coin(validMetadata.Base, 1)})
 	suite.Require().NoError(err)
 
 	// pair := types.NewTokenPair(contractAddr, cosmosTokenBase, true, types.OWNER_MODULE)
@@ -101,7 +101,7 @@ func (suite *KeeperTestSuite) setupRegisterIBCVoucher() (banktypes.Metadata, *ty
 		Display: ibcBase,
 	}
 
-	err := suite.app.BankKeeper.MintCoins(suite.ctx, inflationtypes.ModuleName, sdk.Coins{sdk.NewInt64Coin(validMetadata.Base, 1)})
+	err := suite.app.BankKeeper.MintCoins(suite.ctx, mint.ModuleName, sdk.Coins{sdk.NewInt64Coin(validMetadata.Base, 1)})
 	suite.Require().NoError(err)
 
 	// pair := types.NewTokenPair(contractAddr, cosmosTokenBase, true, types.OWNER_MODULE)
@@ -183,7 +183,7 @@ func (suite KeeperTestSuite) TestRegisterCoin() {
 					Display: cosmosTokenDisplay,
 				}
 
-				err := suite.app.BankKeeper.MintCoins(suite.ctx, inflationtypes.ModuleName, sdk.Coins{sdk.NewInt64Coin(validMetadata.Base, 1)})
+				err := suite.app.BankKeeper.MintCoins(suite.ctx, mint.ModuleName, sdk.Coins{sdk.NewInt64Coin(validMetadata.Base, 1)})
 				suite.Require().NoError(err)
 				suite.app.BankKeeper.SetDenomMetaData(suite.ctx, validMetadata)
 			},
@@ -193,7 +193,7 @@ func (suite KeeperTestSuite) TestRegisterCoin() {
 			"evm denom registration - evm",
 			func() {
 				metadata.Base = "evm"
-				err := suite.app.BankKeeper.MintCoins(suite.ctx, inflationtypes.ModuleName, sdk.Coins{sdk.NewInt64Coin(metadata.Base, 1)})
+				err := suite.app.BankKeeper.MintCoins(suite.ctx, mint.ModuleName, sdk.Coins{sdk.NewInt64Coin(metadata.Base, 1)})
 				suite.Require().NoError(err)
 			},
 			false,
@@ -202,7 +202,7 @@ func (suite KeeperTestSuite) TestRegisterCoin() {
 			"evm denom registration - evmos",
 			func() {
 				metadata.Base = "evmos"
-				err := suite.app.BankKeeper.MintCoins(suite.ctx, inflationtypes.ModuleName, sdk.Coins{sdk.NewInt64Coin(metadata.Base, 1)})
+				err := suite.app.BankKeeper.MintCoins(suite.ctx, mint.ModuleName, sdk.Coins{sdk.NewInt64Coin(metadata.Base, 1)})
 				suite.Require().NoError(err)
 			},
 			false,
@@ -211,7 +211,7 @@ func (suite KeeperTestSuite) TestRegisterCoin() {
 			"evm denom registration - aevmos",
 			func() {
 				metadata.Base = "aevmos"
-				err := suite.app.BankKeeper.MintCoins(suite.ctx, inflationtypes.ModuleName, sdk.Coins{sdk.NewInt64Coin(metadata.Base, 1)})
+				err := suite.app.BankKeeper.MintCoins(suite.ctx, mint.ModuleName, sdk.Coins{sdk.NewInt64Coin(metadata.Base, 1)})
 				suite.Require().NoError(err)
 			},
 			false,
@@ -220,7 +220,7 @@ func (suite KeeperTestSuite) TestRegisterCoin() {
 			"evm denom registration - wevmos",
 			func() {
 				metadata.Base = "wevmos"
-				err := suite.app.BankKeeper.MintCoins(suite.ctx, inflationtypes.ModuleName, sdk.Coins{sdk.NewInt64Coin(metadata.Base, 1)})
+				err := suite.app.BankKeeper.MintCoins(suite.ctx, mint.ModuleName, sdk.Coins{sdk.NewInt64Coin(metadata.Base, 1)})
 				suite.Require().NoError(err)
 			},
 			false,
@@ -229,7 +229,7 @@ func (suite KeeperTestSuite) TestRegisterCoin() {
 			"ok",
 			func() {
 				metadata.Base = cosmosTokenBase
-				err := suite.app.BankKeeper.MintCoins(suite.ctx, inflationtypes.ModuleName, sdk.Coins{sdk.NewInt64Coin(metadata.Base, 1)})
+				err := suite.app.BankKeeper.MintCoins(suite.ctx, mint.ModuleName, sdk.Coins{sdk.NewInt64Coin(metadata.Base, 1)})
 				suite.Require().NoError(err)
 			},
 			true,
@@ -238,7 +238,7 @@ func (suite KeeperTestSuite) TestRegisterCoin() {
 			"force fail evm",
 			func() {
 				metadata.Base = cosmosTokenBase
-				err := suite.app.BankKeeper.MintCoins(suite.ctx, inflationtypes.ModuleName, sdk.Coins{sdk.NewInt64Coin(metadata.Base, 1)})
+				err := suite.app.BankKeeper.MintCoins(suite.ctx, mint.ModuleName, sdk.Coins{sdk.NewInt64Coin(metadata.Base, 1)})
 				suite.Require().NoError(err)
 
 				mockEVMKeeper := &MockEVMKeeper{}
@@ -254,7 +254,7 @@ func (suite KeeperTestSuite) TestRegisterCoin() {
 			"force delete module account evm",
 			func() {
 				metadata.Base = cosmosTokenBase
-				err := suite.app.BankKeeper.MintCoins(suite.ctx, inflationtypes.ModuleName, sdk.Coins{sdk.NewInt64Coin(metadata.Base, 1)})
+				err := suite.app.BankKeeper.MintCoins(suite.ctx, mint.ModuleName, sdk.Coins{sdk.NewInt64Coin(metadata.Base, 1)})
 				suite.Require().NoError(err)
 
 				acc := suite.app.AccountKeeper.GetAccount(suite.ctx, types.ModuleAddress.Bytes())

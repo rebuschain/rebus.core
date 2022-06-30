@@ -114,8 +114,8 @@ import (
 	_ "github.com/tharsis/evmos/v4/client/docs/statik"
 
 	"github.com/tharsis/evmos/v4/app/ante"
-	v2 "github.com/tharsis/evmos/v4/app/upgrades/v2"
-	v4 "github.com/tharsis/evmos/v4/app/upgrades/v4"
+	v0 "github.com/tharsis/evmos/v4/app/upgrades/v0"
+
 	"github.com/tharsis/evmos/v4/x/claims"
 	claimskeeper "github.com/tharsis/evmos/v4/x/claims/keeper"
 	claimstypes "github.com/tharsis/evmos/v4/x/claims/types"
@@ -1020,20 +1020,11 @@ func initParamsKeeper(
 }
 
 func (app *Evmos) setupUpgradeHandlers() {
-	// v2 upgrade handler
+	// v0 upgrade handler
 	app.UpgradeKeeper.SetUpgradeHandler(
-		v2.UpgradeName,
-		v2.CreateUpgradeHandler(app.mm, app.configurator),
-	)
-
-	// NOTE: no v3 upgrade handler as it required an unscheduled manual upgrade.
-
-	// v4 upgrade handler
-	app.UpgradeKeeper.SetUpgradeHandler(
-		v4.UpgradeName,
-		v4.CreateUpgradeHandler(
+		v0.UpgradeName,
+		v0.CreateUpgradeHandler(
 			app.mm, app.configurator,
-			app.IBCKeeper.ClientKeeper,
 		),
 	)
 
@@ -1052,10 +1043,7 @@ func (app *Evmos) setupUpgradeHandlers() {
 	var storeUpgrades *storetypes.StoreUpgrades
 
 	switch upgradeInfo.Name {
-	case v2.UpgradeName:
-		// no store upgrades in v2
-	case v4.UpgradeName:
-		// no store upgrades in v4
+	case v0.UpgradeName:
 	}
 
 	if storeUpgrades != nil {

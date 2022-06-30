@@ -6,8 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
-	v2 "github.com/tharsis/evmos/v4/app/upgrades/v2"
-	v4 "github.com/tharsis/evmos/v4/app/upgrades/v4"
+	v0 "github.com/tharsis/evmos/v4/app/upgrades/v0"
 	"github.com/tharsis/evmos/v4/types"
 )
 
@@ -21,7 +20,14 @@ import (
 // 	2) Release the software defined in the upgrade-info
 func (app *Evmos) ScheduleForkUpgrade(ctx sdk.Context) {
 	// NOTE: there are no testnet forks for the existing versions
-	if !types.IsMainnet(ctx.ChainID()) {
+
+	/*
+		if !types.IsMainnet(ctx.ChainID()) {
+			return
+		}
+	*/
+
+	if !types.IsTestnet(ctx.ChainID()) {
 		return
 	}
 
@@ -31,12 +37,9 @@ func (app *Evmos) ScheduleForkUpgrade(ctx sdk.Context) {
 
 	// handle mainnet forks
 	switch ctx.BlockHeight() {
-	case v2.MainnetUpgradeHeight:
-		upgradePlan.Name = v2.UpgradeName
-		upgradePlan.Info = v2.UpgradeInfo
-	case v4.MainnetUpgradeHeight:
-		upgradePlan.Name = v4.UpgradeName
-		upgradePlan.Info = v4.UpgradeInfo
+	case v0.TestNetUpgradeHeight:
+		upgradePlan.Name = v0.UpgradeName
+		// upgradePlan.Info = v2.UpgradeInfo
 	default:
 		// No-op
 		return

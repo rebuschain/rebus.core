@@ -1025,6 +1025,8 @@ func (app *Evmos) setupUpgradeHandlers() {
 		v0.UpgradeName,
 		v0.CreateUpgradeHandler(
 			app.mm, app.configurator,
+			app.BankKeeper,
+			app.MintKeeper,
 		),
 	)
 

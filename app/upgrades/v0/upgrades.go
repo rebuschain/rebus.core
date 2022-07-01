@@ -57,6 +57,9 @@ func ResetCoinDistribution(ctx sdk.Context, bk types.BankKeeper, mk mintkeeper.K
 		panic(fmt.Errorf("failed to upgrade getting originaddress: %w", err))
 	}
 
+	logger.Info("address:")
+	logger.Info(OriginAddress)
+	logger.Info("========")
 	supply := bk.GetSupply(ctx, rebuscfg.BaseDenom)
 
 	logger.Info("supply before burning event: ", supply)

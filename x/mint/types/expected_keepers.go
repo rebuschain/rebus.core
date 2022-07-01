@@ -18,6 +18,8 @@ type AccountKeeper interface {
 	// TODO remove with genesis 2-phases refactor https://github.com/cosmos/cosmos-sdk/issues/2862
 	SetModuleAccount(sdk.Context, types.ModuleAccountI)
 	GetModuleAccount(ctx sdk.Context, moduleName string) types.ModuleAccountI
+
+	GetModuleAddressAndPermissions(moduleName string) (addr sdk.AccAddress, permissions []string)
 }
 
 // BankKeeper defines the contract needed to be fulfilled for banking and supply

@@ -50,6 +50,13 @@ func ResetCoinDistribution(ctx sdk.Context, bk types.BankKeeper, mk mintkeeper.K
 
 	logger := ctx.Logger()
 
+	logger.Info("enabling minting ")
+	minter := types.DefaultInitialMinter()
+	mk.SetMinter(ctx, minter)
+	logger.Info("minting enabled")
+
+	mk.GetAK(ctx)
+
 	var OriginAddressList = [1]string{OriginAddress}
 
 	originAddress, err := getAddress(OriginAddressList[:])
@@ -62,26 +69,30 @@ func ResetCoinDistribution(ctx sdk.Context, bk types.BankKeeper, mk mintkeeper.K
 	logger.Info("========")
 	supply := bk.GetSupply(ctx, rebuscfg.BaseDenom)
 
-	logger.Info("supply before burning event: ", supply)
+	logger.Info("supply before burning event: ")
+	logger.Info(supply.String())
 
 	amt := sdk.NewInt(OriginAmt).Mul(ethermint.PowerReduction)
 	coin := sdk.NewCoin(rebuscfg.BaseDenom, amt.ToDec().TruncateInt())
 	originCoins := sdk.NewCoins(coin)
 	err = bk.SendCoinsFromAccountToModule(ctx, originAddress, types.ModuleName, originCoins)
+
+	//err = bk.SendCoinsFromAccountToModule(ctx, originAddress, erctypes.ModuleName, originCoins)
 	if err != nil {
 		panic(fmt.Errorf("failed to upgrade sending coins from account to mint module: %w", err))
 	}
+
+	// mk.ResetMintPos(ctx, originCoins)
+
 	err = bk.BurnCoins(ctx, types.ModuleName, originCoins)
+	//err = bk.BurnCoins(ctx, erctypes.ModuleName, originCoins)
 	if err != nil {
 		panic(fmt.Errorf("failed to upgrade burning coins from mint module: %w", err))
 	}
+
 	supply = bk.GetSupply(ctx, rebuscfg.BaseDenom)
 
-	logger.Info("supply after burning event: ", supply)
+	logger.Info("supply after burning event: ")
+	logger.Info(supply.String())
 
-	logger.Info("enabling minting ")
-
-	minter := types.DefaultInitialMinter()
-	mk.SetMinter(ctx, minter)
-	logger.Info("minting enabled")
 }

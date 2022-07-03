@@ -10,4 +10,6 @@ const (
 
 	OriginAddress = "rebus1dl90xa89ljj29mna8uasdxs3nejdw46x8767tc"
 	OriginAmt     = 585_000_000
+
+	TempBurnModule = "tempburnmod"
 )

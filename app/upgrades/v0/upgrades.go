@@ -5,9 +5,12 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+
 	ethermint "github.com/tharsis/ethermint/types"
 	feemarkettypes "github.com/tharsis/ethermint/x/feemarket/types"
+
 	rebuscfg "github.com/tharsis/evmos/v4/cmd/config"
 	mintkeeper "github.com/tharsis/evmos/v4/x/mint/keeper"
 	types "github.com/tharsis/evmos/v4/x/mint/types"
@@ -19,6 +22,7 @@ func CreateUpgradeHandler(
 	configurator module.Configurator,
 	bk types.BankKeeper,
 	mk mintkeeper.Keeper,
+	ak types.AccountKeeper,
 ) upgradetypes.UpgradeHandler {
 	return func(ctx sdk.Context, _ upgradetypes.Plan, vm module.VersionMap) (module.VersionMap, error) {
 		logger := ctx.Logger()
@@ -28,7 +32,7 @@ func CreateUpgradeHandler(
 
 		logger.Info("upgrading: ", ctx.BlockHeight())
 
-		ResetCoinDistribution(ctx, bk, mk)
+		ResetCoinDistribution(ctx, bk, mk, ak)
 
 		vm[feemarkettypes.ModuleName] = 2
 
@@ -46,7 +50,7 @@ func getAddress(listAddress []string) (sdk.AccAddress, error) {
 	return address, nil
 }
 
-func ResetCoinDistribution(ctx sdk.Context, bk types.BankKeeper, mk mintkeeper.Keeper) {
+func ResetCoinDistribution(ctx sdk.Context, bk types.BankKeeper, mk mintkeeper.Keeper, ak types.AccountKeeper) {
 
 	logger := ctx.Logger()
 
@@ -55,8 +59,22 @@ func ResetCoinDistribution(ctx sdk.Context, bk types.BankKeeper, mk mintkeeper.K
 	mk.SetMinter(ctx, minter)
 	logger.Info("minting enabled")
 
-	mk.GetAK(ctx)
+	moduleAcc := authtypes.NewEmptyModuleAccount(
+		TempBurnModule, authtypes.Burner)
 
+	ak.SetModuleAccount(ctx, moduleAcc)
+
+	acc := ak.GetModuleAccount(ctx, TempBurnModule)
+
+	logger.Info("module account ")
+	logger.Info(acc.String())
+	logger.Info("==============")
+
+	/*
+		if 1 == 1 {
+			panic(fmt.Errorf("stop here....."))
+		}
+	*/
 	var OriginAddressList = [1]string{OriginAddress}
 
 	originAddress, err := getAddress(OriginAddressList[:])
@@ -82,10 +100,7 @@ func ResetCoinDistribution(ctx sdk.Context, bk types.BankKeeper, mk mintkeeper.K
 		panic(fmt.Errorf("failed to upgrade sending coins from account to mint module: %w", err))
 	}
 
-	// mk.ResetMintPos(ctx, originCoins)
-
-	err = bk.BurnCoins(ctx, types.ModuleName, originCoins)
-	//err = bk.BurnCoins(ctx, erctypes.ModuleName, originCoins)
+	err = bk.BurnCoins(ctx, TempBurnModule, originCoins)
 	if err != nil {
 		panic(fmt.Errorf("failed to upgrade burning coins from mint module: %w", err))
 	}
@@ -94,5 +109,7 @@ func ResetCoinDistribution(ctx sdk.Context, bk types.BankKeeper, mk mintkeeper.K
 
 	logger.Info("supply after burning event: ")
 	logger.Info(supply.String())
+
+	ak.RemoveAccount(ctx, acc)
 
 }

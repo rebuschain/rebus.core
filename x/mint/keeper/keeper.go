@@ -57,23 +57,6 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", "x/"+types.ModuleName)
 }
 
-func (k Keeper) GetAK(ctx sdk.Context) {
-
-	logger := k.Logger(ctx)
-	acc := k.accountKeeper.GetModuleAccount(ctx, types.ModuleName)
-
-	logger.Info("module account")
-	logger.Info(acc.String())
-
-	saddr, perms := k.accountKeeper.GetModuleAddressAndPermissions(types.ModuleName)
-
-	logger.Info("saddr")
-	logger.Info(saddr.String())
-	logger.Info("perms")
-	logger.Info(perms[0])
-	logger.Info(perms[1])
-}
-
 // get the minter
 func (k Keeper) GetMinter(ctx sdk.Context) (minter types.Minter) {
 	store := ctx.KVStore(k.storeKey)

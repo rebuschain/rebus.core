@@ -206,6 +206,7 @@ var (
 		// inflationtypes.ModuleName:      {authtypes.Minter},
 		erc20types.ModuleName:  {authtypes.Minter, authtypes.Burner},
 		claimstypes.ModuleName: nil,
+		"tempburnmod":          {authtypes.Burner},
 		// incentivestypes.ModuleName:     {authtypes.Minter, authtypes.Burner},
 	}
 

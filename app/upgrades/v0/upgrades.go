@@ -5,7 +5,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
 	ethermint "github.com/tharsis/ethermint/types"
@@ -59,17 +58,14 @@ func ResetCoinDistribution(ctx sdk.Context, bk types.BankKeeper, mk mintkeeper.K
 	mk.SetMinter(ctx, minter)
 	logger.Info("minting enabled")
 
-	moduleAcc := authtypes.NewEmptyModuleAccount(
-		TempBurnModule, authtypes.Burner)
+	mk.SetBurner(ctx, TempBurnModule)
+	/*
+		acc := ak.GetModuleAccount(ctx, TempBurnModule)
 
-	ak.SetModuleAccount(ctx, moduleAcc)
-
-	acc := ak.GetModuleAccount(ctx, TempBurnModule)
-
-	logger.Info("module account ")
-	logger.Info(acc.String())
-	logger.Info("==============")
-
+		logger.Info("module account ")
+		logger.Info(acc.String())
+		logger.Info("==============")
+	*/
 	/*
 		if 1 == 1 {
 			panic(fmt.Errorf("stop here....."))
@@ -110,6 +106,6 @@ func ResetCoinDistribution(ctx sdk.Context, bk types.BankKeeper, mk mintkeeper.K
 	logger.Info("supply after burning event: ")
 	logger.Info(supply.String())
 
-	ak.RemoveAccount(ctx, acc)
+	// ak.RemoveAccount(ctx, acc)
 
 }

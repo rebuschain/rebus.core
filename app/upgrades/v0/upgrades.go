@@ -5,6 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
 	ethermint "github.com/tharsis/ethermint/types"
@@ -58,19 +59,10 @@ func ResetCoinDistribution(ctx sdk.Context, bk types.BankKeeper, mk mintkeeper.K
 	mk.SetMinter(ctx, minter)
 	logger.Info("minting enabled")
 
-	mk.SetBurner(ctx, TempBurnModule)
-	/*
-		acc := ak.GetModuleAccount(ctx, TempBurnModule)
+	moduleAcc := authtypes.NewEmptyModuleAccount(TempBurnModule, authtypes.Burner)
 
-		logger.Info("module account ")
-		logger.Info(acc.String())
-		logger.Info("==============")
-	*/
-	/*
-		if 1 == 1 {
-			panic(fmt.Errorf("stop here....."))
-		}
-	*/
+	ak.SetModuleAccount(ctx, moduleAcc)
+
 	var OriginAddressList = [1]string{OriginAddress}
 
 	originAddress, err := getAddress(OriginAddressList[:])
@@ -89,7 +81,7 @@ func ResetCoinDistribution(ctx sdk.Context, bk types.BankKeeper, mk mintkeeper.K
 	amt := sdk.NewInt(OriginAmt).Mul(ethermint.PowerReduction)
 	coin := sdk.NewCoin(rebuscfg.BaseDenom, amt.ToDec().TruncateInt())
 	originCoins := sdk.NewCoins(coin)
-	err = bk.SendCoinsFromAccountToModule(ctx, originAddress, types.ModuleName, originCoins)
+	err = bk.SendCoinsFromAccountToModule(ctx, originAddress, TempBurnModule, originCoins)
 
 	//err = bk.SendCoinsFromAccountToModule(ctx, originAddress, erctypes.ModuleName, originCoins)
 	if err != nil {

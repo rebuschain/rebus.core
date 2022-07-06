@@ -5,7 +5,6 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/tharsis/evmos/v4/x/mint/types"
 )
@@ -56,28 +55,6 @@ func NewKeeper(
 // Logger returns a module-specific logger.
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", "x/"+types.ModuleName)
-}
-
-func (k Keeper) SetBurner(ctx sdk.Context, name string) {
-
-	logger := ctx.Logger()
-
-	moduleAcc := authtypes.NewEmptyModuleAccount(name, authtypes.Burner)
-
-	k.accountKeeper.SetModuleAccount(ctx, moduleAcc)
-	// ak.SetModuleAccount(ctx, moduleAcc)
-
-	logger.Info("module account 1")
-	logger.Info(moduleAcc.String())
-	logger.Info("==============")
-
-	/*
-		acc := k.accountKeeper.GetModuleAccount(ctx, name)
-
-		logger.Info("module account 2")
-		logger.Info(acc.String())
-		logger.Info("==============")
-	*/
 }
 
 // get the minter

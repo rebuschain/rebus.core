@@ -15,10 +15,10 @@ import (
 	"github.com/tharsis/ethermint/tests"
 	ethermint "github.com/tharsis/ethermint/types"
 
-	"github.com/tharsis/evmos/v4/testutil"
-	mint "github.com/tharsis/evmos/v4/x/mint/types"
+	"github.com/rebuschain/rebus.core/v1/testutil"
+	mint "github.com/rebuschain/rebus.core/v1/x/mint/types"
 
-	"github.com/tharsis/evmos/v4/x/claims/types"
+	"github.com/rebuschain/rebus.core/v1/x/claims/types"
 )
 
 func (suite *KeeperTestSuite) TestGetClaimableAmountForAction() {

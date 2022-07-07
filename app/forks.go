@@ -6,8 +6,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
-	v0 "github.com/tharsis/evmos/v4/app/upgrades/v0"
-	"github.com/tharsis/evmos/v4/types"
+	v0 "github.com/rebuschain/rebus.core/v1/app/upgrades/v0"
+	"github.com/rebuschain/rebus.core/v1/types"
 )
 
 // ScheduleForkUpgrade executes any necessary fork logic for based upon the current

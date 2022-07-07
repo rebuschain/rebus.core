@@ -12,9 +12,9 @@ import (
 	"github.com/tharsis/ethermint/tests"
 	evmtypes "github.com/tharsis/ethermint/x/evm/types"
 
-	"github.com/tharsis/evmos/v4/x/erc20/keeper"
-	"github.com/tharsis/evmos/v4/x/erc20/types"
-	mint "github.com/tharsis/evmos/v4/x/mint/types"
+	"github.com/rebuschain/rebus.core/v1/x/erc20/keeper"
+	"github.com/rebuschain/rebus.core/v1/x/erc20/types"
+	mint "github.com/rebuschain/rebus.core/v1/x/mint/types"
 )
 
 const (

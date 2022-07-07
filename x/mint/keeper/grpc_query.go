@@ -4,7 +4,7 @@ import (
 	"context"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/tharsis/evmos/v4/x/mint/types"
+	"github.com/rebuschain/rebus.core/v1/x/mint/types"
 )
 
 var _ types.QueryServer = Keeper{}

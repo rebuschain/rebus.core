@@ -3,7 +3,7 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/tharsis/evmos/v4/x/erc20/types"
+	"github.com/rebuschain/rebus.core/v1/x/erc20/types"
 )
 
 // GetParams returns the total set of erc20 parameters.

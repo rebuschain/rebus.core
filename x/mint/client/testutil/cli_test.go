@@ -6,7 +6,7 @@ package testutil
 import (
 	"testing"
 
-	"github.com/tharsis/evmos/v4/testutil/network"
+	"github.com/rebuschain/rebus.core/v1/testutil/network"
 
 	"github.com/stretchr/testify/suite"
 )

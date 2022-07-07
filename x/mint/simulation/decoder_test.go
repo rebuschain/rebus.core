@@ -9,9 +9,9 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/kv"
-	"github.com/tharsis/evmos/v4/app"
-	"github.com/tharsis/evmos/v4/x/mint/simulation"
-	"github.com/tharsis/evmos/v4/x/mint/types"
+	"github.com/rebuschain/rebus.core/v1/app"
+	"github.com/rebuschain/rebus.core/v1/x/mint/simulation"
+	"github.com/rebuschain/rebus.core/v1/x/mint/types"
 )
 
 func TestDecodeStore(t *testing.T) {

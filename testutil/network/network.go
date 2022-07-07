@@ -47,8 +47,8 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	"github.com/rebuschain/rebus.core/v1/app"
 	"github.com/tharsis/ethermint/crypto/hd"
-	"github.com/tharsis/evmos/v4/app"
 
 	"github.com/tharsis/ethermint/encoding"
 	"github.com/tharsis/ethermint/server/config"

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/tharsis/evmos/v4/x/epochs"
-	"github.com/tharsis/evmos/v4/x/epochs/types"
+	"github.com/rebuschain/rebus.core/v1/x/epochs"
+	"github.com/rebuschain/rebus.core/v1/x/epochs/types"
 )
 
 func (suite *KeeperTestSuite) TestEpochInfoChangesBeginBlockerAndInitGenesis() {

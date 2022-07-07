@@ -29,8 +29,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
-	"github.com/tharsis/evmos/v4/app"
-	rebuscfg "github.com/tharsis/evmos/v4/cmd/config"
+	"github.com/rebuschain/rebus.core/v1/app"
+	rebuscfg "github.com/rebuschain/rebus.core/v1/cmd/config"
 )
 
 type printInfo struct {

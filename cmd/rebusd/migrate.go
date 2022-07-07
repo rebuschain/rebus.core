@@ -16,8 +16,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 
-	// v0 "github.com/tharsis/evmos/v4/app/upgrades/v0"
-	"github.com/tharsis/evmos/v4/types"
+	// v0 "github.com/rebuschain/rebus.core/v1/app/upgrades/v0"
+	"github.com/rebuschain/rebus.core/v1/types"
 )
 
 // FlagGenesisTime defines the genesis time in string format

@@ -8,8 +8,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	keep "github.com/tharsis/evmos/v4/x/mint/keeper"
-	"github.com/tharsis/evmos/v4/x/mint/types"
+	keep "github.com/rebuschain/rebus.core/v1/x/mint/keeper"
+	"github.com/rebuschain/rebus.core/v1/x/mint/types"
 
 	abci "github.com/tendermint/tendermint/abci/types"
 )

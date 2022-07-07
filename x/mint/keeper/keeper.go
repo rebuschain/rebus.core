@@ -6,7 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/tharsis/evmos/v4/x/mint/types"
+	"github.com/rebuschain/rebus.core/v1/x/mint/types"
 )
 
 // Keeper of the mint store

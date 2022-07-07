@@ -11,9 +11,9 @@ import (
 	ethermint "github.com/tharsis/ethermint/types"
 	feemarkettypes "github.com/tharsis/ethermint/x/feemarket/types"
 
-	rebuscfg "github.com/tharsis/evmos/v4/cmd/config"
-	mintkeeper "github.com/tharsis/evmos/v4/x/mint/keeper"
-	types "github.com/tharsis/evmos/v4/x/mint/types"
+	rebuscfg "github.com/rebuschain/rebus.core/v1/cmd/config"
+	mintkeeper "github.com/rebuschain/rebus.core/v1/x/mint/keeper"
+	types "github.com/rebuschain/rebus.core/v1/x/mint/types"
 )
 
 // CreateUpgradeHandler creates an SDK upgrade handler for v4

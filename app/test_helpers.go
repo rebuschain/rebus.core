@@ -17,8 +17,8 @@ import (
 	"github.com/tharsis/ethermint/encoding"
 	feemarkettypes "github.com/tharsis/ethermint/x/feemarket/types"
 
-	"github.com/tharsis/evmos/v4/cmd/config"
-	"github.com/tharsis/evmos/v4/types"
+	"github.com/rebuschain/rebus.core/v1/cmd/config"
+	"github.com/rebuschain/rebus.core/v1/types"
 )
 
 func init() {

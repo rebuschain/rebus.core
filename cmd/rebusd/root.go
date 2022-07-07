@@ -38,9 +38,9 @@ import (
 	servercfg "github.com/tharsis/ethermint/server/config"
 	srvflags "github.com/tharsis/ethermint/server/flags"
 
+	"github.com/rebuschain/rebus.core/v1/app"
+	cmdcfg "github.com/rebuschain/rebus.core/v1/cmd/config"
 	"github.com/tharsis/ethermint/crypto/hd"
-	"github.com/tharsis/evmos/v4/app"
-	cmdcfg "github.com/tharsis/evmos/v4/cmd/config"
 )
 
 const (

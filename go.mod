@@ -1,6 +1,6 @@
-module github.com/tharsis/evmos/v4
+module github.com/rebuschain/rebus.core/v1
 
-go 1.17
+go 1.18
 
 require (
 	github.com/cosmos/cosmos-sdk v0.45.5
@@ -29,7 +29,6 @@ require (
 )
 
 require (
-	github.com/allegro/bigcache v1.2.1 // indirect
 	github.com/armon/go-metrics v0.4.0 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
 )

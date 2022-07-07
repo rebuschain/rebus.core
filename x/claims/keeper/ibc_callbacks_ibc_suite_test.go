@@ -12,11 +12,11 @@ import (
 	channeltypes "github.com/cosmos/ibc-go/v3/modules/core/04-channel/types"
 	ibcgotesting "github.com/cosmos/ibc-go/v3/testing"
 
+	"github.com/rebuschain/rebus.core/v1/app"
+	ibctesting "github.com/rebuschain/rebus.core/v1/ibc/testing"
+	"github.com/rebuschain/rebus.core/v1/testutil"
+	"github.com/rebuschain/rebus.core/v1/x/claims/types"
 	"github.com/tharsis/ethermint/tests"
-	"github.com/tharsis/evmos/v4/app"
-	ibctesting "github.com/tharsis/evmos/v4/ibc/testing"
-	"github.com/tharsis/evmos/v4/testutil"
-	"github.com/tharsis/evmos/v4/x/claims/types"
 )
 
 type IBCTestingSuite struct {

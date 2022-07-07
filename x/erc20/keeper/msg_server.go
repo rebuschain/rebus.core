@@ -8,8 +8,8 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/ethereum/go-ethereum/common"
 
-	"github.com/tharsis/evmos/v4/contracts"
-	"github.com/tharsis/evmos/v4/x/erc20/types"
+	"github.com/rebuschain/rebus.core/v1/contracts"
+	"github.com/rebuschain/rebus.core/v1/x/erc20/types"
 )
 
 var _ types.MsgServer = &Keeper{}

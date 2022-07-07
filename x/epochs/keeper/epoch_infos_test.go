@@ -3,7 +3,7 @@ package keeper_test
 import (
 	"time"
 
-	"github.com/tharsis/evmos/v4/x/epochs/types"
+	"github.com/rebuschain/rebus.core/v1/x/epochs/types"
 )
 
 func (suite *KeeperTestSuite) TestEpochLifeCycle() {

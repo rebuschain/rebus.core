@@ -10,9 +10,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/tharsis/evmos/v4/testutil/network"
-	"github.com/tharsis/evmos/v4/x/mint/client/cli"
-	minttypes "github.com/tharsis/evmos/v4/x/mint/types"
+	"github.com/rebuschain/rebus.core/v1/testutil/network"
+	"github.com/rebuschain/rebus.core/v1/x/mint/client/cli"
+	minttypes "github.com/rebuschain/rebus.core/v1/x/mint/types"
 )
 
 type IntegrationTestSuite struct {

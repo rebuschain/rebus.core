@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/tharsis/evmos/v4/x/mint/simulation"
+	"github.com/rebuschain/rebus.core/v1/x/mint/simulation"
 )
 
 func TestParamChangest(t *testing.T) {

@@ -111,25 +111,25 @@ import (
 	feemarkettypes "github.com/tharsis/ethermint/x/feemarket/types"
 
 	// unnamed import of statik for swagger UI support
-	_ "github.com/tharsis/evmos/v4/client/docs/statik"
+	_ "github.com/rebuschain/rebus.core/v1/client/docs/statik"
 
-	"github.com/tharsis/evmos/v4/app/ante"
-	v0 "github.com/tharsis/evmos/v4/app/upgrades/v0"
+	"github.com/rebuschain/rebus.core/v1/app/ante"
+	v0 "github.com/rebuschain/rebus.core/v1/app/upgrades/v0"
 
-	"github.com/tharsis/evmos/v4/x/claims"
-	claimskeeper "github.com/tharsis/evmos/v4/x/claims/keeper"
-	claimstypes "github.com/tharsis/evmos/v4/x/claims/types"
-	"github.com/tharsis/evmos/v4/x/epochs"
-	epochskeeper "github.com/tharsis/evmos/v4/x/epochs/keeper"
-	epochstypes "github.com/tharsis/evmos/v4/x/epochs/types"
-	"github.com/tharsis/evmos/v4/x/erc20"
-	erc20client "github.com/tharsis/evmos/v4/x/erc20/client"
-	erc20keeper "github.com/tharsis/evmos/v4/x/erc20/keeper"
-	erc20types "github.com/tharsis/evmos/v4/x/erc20/types"
+	"github.com/rebuschain/rebus.core/v1/x/claims"
+	claimskeeper "github.com/rebuschain/rebus.core/v1/x/claims/keeper"
+	claimstypes "github.com/rebuschain/rebus.core/v1/x/claims/types"
+	"github.com/rebuschain/rebus.core/v1/x/epochs"
+	epochskeeper "github.com/rebuschain/rebus.core/v1/x/epochs/keeper"
+	epochstypes "github.com/rebuschain/rebus.core/v1/x/epochs/types"
+	"github.com/rebuschain/rebus.core/v1/x/erc20"
+	erc20client "github.com/rebuschain/rebus.core/v1/x/erc20/client"
+	erc20keeper "github.com/rebuschain/rebus.core/v1/x/erc20/keeper"
+	erc20types "github.com/rebuschain/rebus.core/v1/x/erc20/types"
 
-	"github.com/tharsis/evmos/v4/x/mint"
-	mintkeeper "github.com/tharsis/evmos/v4/x/mint/keeper"
-	minttypes "github.com/tharsis/evmos/v4/x/mint/types"
+	"github.com/rebuschain/rebus.core/v1/x/mint"
+	mintkeeper "github.com/rebuschain/rebus.core/v1/x/mint/keeper"
+	minttypes "github.com/rebuschain/rebus.core/v1/x/mint/types"
 )
 
 func init() {

@@ -13,8 +13,8 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
 
+	"github.com/rebuschain/rebus.core/v1/types"
 	"github.com/tharsis/ethermint/encoding"
-	"github.com/tharsis/evmos/v4/types"
 )
 
 func TestEvmosExport(t *testing.T) {

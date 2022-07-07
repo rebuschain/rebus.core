@@ -11,11 +11,11 @@ import (
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/tharsis/evmos/v4/x/mint/client/cli"
-	"github.com/tharsis/evmos/v4/x/mint/client/rest"
-	"github.com/tharsis/evmos/v4/x/mint/keeper"
-	"github.com/tharsis/evmos/v4/x/mint/simulation"
-	"github.com/tharsis/evmos/v4/x/mint/types"
+	"github.com/rebuschain/rebus.core/v1/x/mint/client/cli"
+	"github.com/rebuschain/rebus.core/v1/x/mint/client/rest"
+	"github.com/rebuschain/rebus.core/v1/x/mint/keeper"
+	"github.com/rebuschain/rebus.core/v1/x/mint/simulation"
+	"github.com/rebuschain/rebus.core/v1/x/mint/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"

@@ -9,8 +9,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 	"github.com/stretchr/testify/require"
 
-	"github.com/tharsis/evmos/v4/app"
-	rebusd "github.com/tharsis/evmos/v4/cmd/rebusd"
+	"github.com/rebuschain/rebus.core/v1/app"
+	rebusd "github.com/rebuschain/rebus.core/v1/cmd/rebusd"
 )
 
 func TestInitCmd(t *testing.T) {

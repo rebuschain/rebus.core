@@ -4,7 +4,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
-	mint "github.com/tharsis/evmos/v4/x/mint/types"
+	mint "github.com/rebuschain/rebus.core/v1/x/mint/types"
 )
 
 // FundAccount is a utility function that funds an account by minting and

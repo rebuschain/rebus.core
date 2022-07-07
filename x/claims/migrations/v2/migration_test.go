@@ -7,11 +7,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/testutil"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/rebuschain/rebus.core/v1/app"
+	v2 "github.com/rebuschain/rebus.core/v1/x/claims/migrations/v2"
+	claims "github.com/rebuschain/rebus.core/v1/x/claims/types"
 	"github.com/stretchr/testify/require"
 	"github.com/tharsis/ethermint/encoding"
-	"github.com/tharsis/evmos/v4/app"
-	v2 "github.com/tharsis/evmos/v4/x/claims/migrations/v2"
-	claims "github.com/tharsis/evmos/v4/x/claims/types"
 )
 
 func TestStoreMigration(t *testing.T) {

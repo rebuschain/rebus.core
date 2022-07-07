@@ -9,7 +9,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/tharsis/evmos/v4/cmd/config"
+	"github.com/rebuschain/rebus.core/v1/cmd/config"
 )
 
 // Parameter store keys

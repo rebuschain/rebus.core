@@ -2,11 +2,14 @@
 
 PACKAGES_NOSIMULATION=$(shell go list ./... | grep -v '/simulation')
 PACKAGES_SIMTEST=$(shell go list ./... | grep '/simulation')
-DIFF_TAG=$(shell git rev-list --tags="v*" --max-count=1 --not $(shell git rev-list --tags="v*" "HEAD..origin"))
-DEFAULT_TAG=$(shell git rev-list --tags="v*" --max-count=1)
-VERSION ?= $(shell echo $(shell git describe --tags $(or $(DIFF_TAG), $(DEFAULT_TAG))) | sed 's/^v//')
-TMVERSION := $(shell go list -m github.com/tendermint/tendermint | sed 's:.* ::')
+# DIFF_TAG=$(shell git rev-list --tags="v*" --max-count=1 --not $(shell git rev-list --tags="v*" "HEAD..origin"))
+# DEFAULT_TAG=$(shell git rev-list --tags="v*" --max-count=1)
+DEFAULT_BRANCH :=$(shell git rev-parse --abbrev-ref HEAD)
 COMMIT := $(shell git log -1 --format='%H')
+# DEFAULT_TAG=$(shell git rev-list --branches --max-count=1)
+#VERSION ?= $(shell echo $(shell git describe --tags $(or $(DIFF_TAG), $(DEFAULT_TAG))) | sed 's/^v//')
+VERSION := $(shell echo $(DEFAULT_BRANCH).$(COMMIT) )
+TMVERSION := $(shell go list -m github.com/tendermint/tendermint | sed 's:.* ::')
 LEDGER_ENABLED ?= true
 BINDIR ?= $(GOPATH)/bin
 REBUS_BINARY = rebusd

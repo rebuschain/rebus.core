@@ -48,7 +48,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/rebuschain/rebus.core/v1/app"
+
 	"github.com/tharsis/ethermint/crypto/hd"
+
+	rebushd "github.com/rebuschain/rebus.core/v1/crypto/keyring"
 
 	"github.com/tharsis/ethermint/encoding"
 	"github.com/tharsis/ethermint/server/config"
@@ -107,7 +110,7 @@ func DefaultConfig() Config {
 		AppConstructor:    NewAppConstructor(encCfg),
 		GenesisState:      app.ModuleBasics.DefaultGenesis(encCfg.Marshaler),
 		TimeoutCommit:     2 * time.Second,
-		ChainID:           fmt.Sprintf("evmos_%d-1", tmrand.Int63n(9999999999999)+1),
+		ChainID:           fmt.Sprintf("reb_%d-1", tmrand.Int63n(9999999999999)+1),
 		NumValidators:     4,
 		BondDenom:         ethermint.AttoPhoton,
 		MinGasPrices:      fmt.Sprintf("0.000006%s", ethermint.AttoPhoton),
@@ -117,15 +120,15 @@ func DefaultConfig() Config {
 		PruningStrategy:   storetypes.PruningOptionNothing,
 		CleanupDir:        true,
 		SigningAlgo:       string(hd.EthSecp256k1Type),
-		KeyringOptions:    []keyring.Option{hd.EthSecp256k1Option()},
+		KeyringOptions:    []keyring.Option{rebushd.Option()},
 		PrintMnemonic:     false,
 	}
 }
 
-// NewAppConstructor returns a new Evmos AppConstructor
+// NewAppConstructor returns a new Rebus AppConstructor
 func NewAppConstructor(encodingCfg params.EncodingConfig) AppConstructor {
 	return func(val Validator) servertypes.Application {
-		return app.NewEvmos(
+		return app.NewRebus(
 			val.Ctx.Logger, dbm.NewMemDB(), nil, true, make(map[int64]bool), val.Ctx.Config.RootDir, 0,
 			encodingCfg,
 			simapp.EmptyAppOptions{},
@@ -330,8 +333,8 @@ func New(l Logger, baseDir string, cfg Config) (*Network, error) {
 		ctx.Logger = logger
 
 		nodeDirName := fmt.Sprintf("node%d", i)
-		nodeDir := filepath.Join(network.BaseDir, nodeDirName, "evmosd")
-		clientDir := filepath.Join(network.BaseDir, nodeDirName, "evmoscli")
+		nodeDir := filepath.Join(network.BaseDir, nodeDirName, "rebusd")
+		clientDir := filepath.Join(network.BaseDir, nodeDirName, "rebusd")
 		gentxsDir := filepath.Join(network.BaseDir, "gentxs")
 
 		err := os.MkdirAll(filepath.Join(nodeDir, "config"), 0o750)

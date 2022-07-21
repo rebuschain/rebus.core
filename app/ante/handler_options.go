@@ -14,7 +14,7 @@ import (
 	evmtypes "github.com/tharsis/ethermint/x/evm/types"
 )
 
-// HandlerOptions defines the list of module keepers required to run the Evmos
+// HandlerOptions defines the list of module keepers required to run the Rebus
 // AnteHandler decorators.
 type HandlerOptions struct {
 	AccountKeeper   evmtypes.AccountKeeper

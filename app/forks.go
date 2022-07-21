@@ -6,7 +6,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
-	v0 "github.com/rebuschain/rebus.core/v1/app/upgrades/v0"
 	"github.com/rebuschain/rebus.core/v1/types"
 )
 
@@ -18,18 +17,17 @@ import (
 //
 // 	1) Release a non-breaking patch version so that the chain can set the scheduled upgrade plan at upgrade-height.
 // 	2) Release the software defined in the upgrade-info
-func (app *Evmos) ScheduleForkUpgrade(ctx sdk.Context) {
+func (app *Rebus) ScheduleForkUpgrade(ctx sdk.Context) {
 	// NOTE: there are no testnet forks for the existing versions
 
+	if !types.IsMainnet(ctx.ChainID()) {
+		return
+	}
 	/*
-		if !types.IsMainnet(ctx.ChainID()) {
+		if !types.IsTestnet(ctx.ChainID()) {
 			return
 		}
 	*/
-
-	if !types.IsTestnet(ctx.ChainID()) {
-		return
-	}
 
 	upgradePlan := upgradetypes.Plan{
 		Height: ctx.BlockHeight(),
@@ -37,9 +35,6 @@ func (app *Evmos) ScheduleForkUpgrade(ctx sdk.Context) {
 
 	// handle mainnet forks
 	switch ctx.BlockHeight() {
-	case v0.TestNetUpgradeHeight:
-		upgradePlan.Name = v0.UpgradeName
-		// upgradePlan.Info = v2.UpgradeInfo
 	default:
 		// No-op
 		return

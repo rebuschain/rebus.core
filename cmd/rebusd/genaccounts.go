@@ -22,7 +22,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 
-	"github.com/tharsis/ethermint/crypto/hd"
+	rebushd "github.com/rebuschain/rebus.core/v1/crypto/keyring"
+
 	ethermint "github.com/tharsis/ethermint/types"
 	evmtypes "github.com/tharsis/ethermint/x/evm/types"
 )
@@ -65,8 +66,7 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 						keyringBackend,
 						clientCtx.HomeDir,
 						inBuf,
-						hd.EthSecp256k1Option(),
-						//evmoskr.Option(),
+						rebushd.Option(),
 					)
 					if err != nil {
 						return err

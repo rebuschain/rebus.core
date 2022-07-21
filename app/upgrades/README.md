@@ -1,10 +1,10 @@
-# Evmos Upgrades
+# Rebus Upgrades
 
 ### Mainnet
 
 
 ### Testnet
 
-- `v0`:
-    - upgrades the `x/feemarket` v2 to v3
+- `v1.0`:
+    - planned upgrade for airdrop claiming
   

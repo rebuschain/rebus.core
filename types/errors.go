@@ -7,7 +7,7 @@ import (
 // RootCodespace is the codespace for all errors defined in this package
 const RootCodespace = "rebus"
 
-// root error codes for Evmos
+// root error codes for Rebus
 const (
 	codeKeyTypeNotSupported = iota + 2
 )

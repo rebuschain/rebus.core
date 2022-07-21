@@ -14,7 +14,7 @@ import (
 	"github.com/tharsis/ethermint/server/config"
 	"github.com/tharsis/ethermint/testutil/network"
 
-	evmosnetwork "github.com/rebuschain/rebus.core/v1/testutil/network"
+	rebusnetwork "github.com/rebuschain/rebus.core/v1/testutil/network"
 )
 
 type IntegrationTestSuite struct {
@@ -27,7 +27,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	s.T().Log("setting up integration test suite")
 
 	var err error
-	cfg := evmosnetwork.DefaultConfig()
+	cfg := rebusnetwork.DefaultConfig()
 	cfg.JSONRPCAddress = config.DefaultJSONRPCAddress
 	cfg.NumValidators = 1
 

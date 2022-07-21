@@ -27,7 +27,7 @@ const (
 const (
 	// DisplayDenom defines the denomination displayed to users in client applications.
 	DisplayDenom = "rebus"
-	// BaseDenom defines to the default denomination used in Evmos (staking, EVN, governance, etc)
+	// BaseDenom defines to the default denomination used in Rebus (staking, EVN, governance, etc)
 	BaseDenom = "arebus"
 )
 

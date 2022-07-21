@@ -8,5 +8,5 @@ The minting module contains the following parameters:
 
 | Key                 | Type            | Example                |
 |---------------------|-----------------|------------------------|
-| MintDenom           | string          | "ujuno"                |
+| MintDenom           | string          | "arebus"                |
 | BlocksPerYear       | string (uint64) | "6311520"              |

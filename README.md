@@ -4,7 +4,7 @@ parent:
 -->
 
 <div align="center">
-  <h1> Evmos </h1>
+  <h1> Rebus </h1>
 </div>
 
 <!-- TODO: add banner -->
@@ -42,10 +42,10 @@ parent:
   </a>
 </div>
 
-Evmos is a scalable, high-throughput Proof-of-Stake blockchain that is fully compatible and
+Rebus is a scalable, high-throughput Proof-of-Stake blockchain that is fully compatible and
 interoperable with Ethereum. It's built using the [Cosmos SDK](https://github.com/cosmos/cosmos-sdk/) which runs on top of [Tendermint Core](https://github.com/tendermint/tendermint) consensus engine.
 
-**Note**: Requires [Go 1.17.5+](https://golang.org/dl/)
+**Note**: Requires [Go 1.18.3+](https://golang.org/dl/)
 
 ## Installation
 

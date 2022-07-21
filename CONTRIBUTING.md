@@ -1,4 +1,4 @@
-# Evmos Contributor Guidelines
+# Rebus Contributor Guidelines
 
 * [General Procedure](#general_procedure)
 * [Architecture Decision Records (ADR)](#adr)
@@ -17,9 +17,9 @@
 
 ## <span id="general_procedure">General Procedure</span>
 
-Thank you for considering making contributions to Evmos and related repositories!
+Thank you for considering making contributions to Rebus and related repositories!
 
-Evmos uses [Tendermint’s coding repo](https://github.com/tendermint/coding) for overall information on repository
+Rebus uses [Tendermint’s coding repo](https://github.com/tendermint/coding) for overall information on repository
 workflow and standards.
 
 Contributing to this repo can mean many things such as participating in discussion or proposing code changes. To ensure
@@ -30,7 +30,7 @@ a smooth workflow for all contributors, the following general procedure for cont
    resolving.
 2. Participate in thoughtful discussion on that issue.
 3. If you would like to contribute:
-    1. If the issue is a proposal, ensure that the proposal has been accepted by the Evmos team.
+    1. If the issue is a proposal, ensure that the proposal has been accepted by the Rebus team.
     2. Ensure that nobody else has already begun working on the same issue. If someone already has, please make sure to
        contact the individual to collaborate.
     3. If nobody has been assigned the issue and you would like to work on it, make a comment on the issue to inform the
@@ -38,7 +38,7 @@ a smooth workflow for all contributors, the following general procedure for cont
        if you are eager and do not get a prompt response, feel free to dive on in!
     4. Follow standard Github best practices:
         1. Fork the repo
-        2. Branch from the HEAD of `development`(For core developers working within the evmos repo, to ensure a
+        2. Branch from the HEAD of `development`(For core developers working within the Rebus repo, to ensure a
            clear ownership of branches, branches must be named with the convention `{moniker}/{issue#}-branch-name`).
         3. Make commits
         4. Submit a PR to `development`
@@ -49,7 +49,7 @@ a smooth workflow for all contributors, the following general procedure for cont
        format).
     8. Please make sure to run `make format` before every commit - the easiest way to do this is having your editor run
        it for you upon saving a file. Additionally, please ensure that your code is lint compliant by running `make lint`
-       . There are CI tests built into the Evmos repository and all PR’s will require that these tests pass before
+       . There are CI tests built into the Rebus repository and all PR’s will require that these tests pass before
        they are able to be merged.
 
 **Note**: for very small or blatantly obvious problems (such as typos), it is not required to open an issue to submit a
@@ -61,7 +61,7 @@ some [good first issues](https://github.com/tharsis/evmos/issues?q=label%3A%22go
 
 ## <span id="adr">Architecture Decision Records (ADR)</span>
 
-When proposing an architecture decision for Evmos, please create
+When proposing an architecture decision for Rebus, please create
 an [ADR](https://github.com/tharsis/evmos/blob/main/docs/architecture/README.md) so further discussions can be
 made. We are following this process so all involved parties are in agreement before any party begins coding the proposed
 implementation. If you would like to see some examples of how these are written refer
@@ -81,8 +81,8 @@ For instance, to create a fork and work on a branch of it, you would:
 3. `git remote rename origin upstream`
 4. `git remote add origin git@github.com:tharsis/evmos.git`
 
-Now `origin` refers to my fork and `upstream` refers to the evmos version. So I can `git push -u origin master` to
-update my fork, and make pull requests to evmos from there. Of course, replace `tharsis` with your git handle.
+Now `origin` refers to my fork and `upstream` refers to the Rebus version. So I can `git push -u origin master` to
+update my fork, and make pull requests to Rebus from there. Of course, replace `tharsis` with your git handle.
 
 To pull in updates from the origin repo, run:
 
@@ -104,7 +104,7 @@ on `go mod tidy -v`.
 ## <span id="protobuf">Protobuf</span>
 
 We use [Protocol Buffers](https://developers.google.com/protocol-buffers) along
-with [gogoproto](https://github.com/gogo/protobuf) to generate code for use in Evmos.
+with [gogoproto](https://github.com/gogo/protobuf) to generate code for use in Rebus.
 
 For deterministic behavior around Protobuf tooling, everything is containerized using Docker. Make sure to have Docker
 installed on your machine, or head to [Docker's website](https://docs.docker.com/get-docker/) to install it.
@@ -146,11 +146,11 @@ For example, in vscode your `.vscode/settings.json` should look like:
 
 ## <span id="testing">Testing</span>
 
-Evmos uses [GitHub Actions](https://github.com/features/actions) for automated testing.
+Rebus uses [GitHub Actions](https://github.com/features/actions) for automated testing.
 
 ## <span id="updating_doc">Updating Documentation</span>
 
-If you open a PR on the Evmos repo, it is mandatory to update the relevant documentation in `/docs`. Please refer to
+If you open a PR on the Rebus repo, it is mandatory to update the relevant documentation in `/docs`. Please refer to
 the docs subdirectory and make changes accordingly. Prior to approval, the Code owners/approvers may request some
 updates to specific docs.
 
@@ -160,7 +160,7 @@ User-facing repos should adhere to the [trunk based development branching model]
 
 Libraries need not follow the model strictly, but would be wise to.
 
-Evmos utilizes [semantic versioning](https://semver.org/).
+Rebus utilizes [semantic versioning](https://semver.org/).
 
 ### <span id="pr_targeting">PR Targeting</span>
 
@@ -215,5 +215,5 @@ All PRs require two Reviews before merge. When reviewing PRs, please use the fol
 8. Tag the release (use `git tag -a`) and create a release in Github.
 9. Delete the `RC` branches.
 
-**Note**: tharsis’s Evmos team currently cuts releases on a need to have basis. We will announce a more
+**Note**: tharsis’s Rebus team currently cuts releases on a need to have basis. We will announce a more
 standardized release schedule as we near production readiness.

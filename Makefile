@@ -289,7 +289,7 @@ update-swagger-docs: statik
 .PHONY: update-swagger-docs
 
 godocs:
-	@echo "--> Wait a few seconds and visit http://localhost:6060/pkg/github.com/tharsis/evmos/types"
+	@echo "--> Wait a few seconds and visit http://localhost:6060/pkg/github.com/rebuschain/rebus.core/types"
 	godoc -http=:6060
 
 # Start docs site at localhost:8080
@@ -526,13 +526,13 @@ ifeq ($(OS),Windows_NT)
 	mkdir localnet-setup &
 	@$(MAKE) localnet-build
 
-	IF not exist "build/node0/$(REBUS_BINARY)/config/genesis.json" docker run --rm -v $(CURDIR)/build\evmos\Z evmosd/node "./evmosd testnet --v 4 -o /evmos --keyring-backend=test --ip-addresses evmosdnode0,evmosdnode1,evmosdnode2,evmosdnode3"
+	IF not exist "build/node0/$(REBUS_BINARY)/config/genesis.json" docker run --rm -v $(CURDIR)/build\rebus\Z rebusd/node "./rebusd testnet --v 4 -o /rebus --keyring-backend=test --ip-addresses rebusdnode0,rebusdnode1,rebusdnode2,rebusdnode3"
 	docker-compose up -d
 else
 	mkdir -p localnet-setup
 	@$(MAKE) localnet-build
 
-	if ! [ -f localnet-setup/node0/$(REBUS_BINARY)/config/genesis.json ]; then docker run --rm -v $(CURDIR)/localnet-setup:/evmos:Z evmosd/node "./evmosd testnet --v 4 -o /evmos --keyring-backend=test --ip-addresses evmosdnode0,evmosdnode1,evmosdnode2,evmosdnode3"; fi
+	if ! [ -f localnet-setup/node0/$(REBUS_BINARY)/config/genesis.json ]; then docker run --rm -v $(CURDIR)/localnet-setup:/rebus:Z rebusd/node "./rebusd testnet --v 4 -o /rebus --keyring-backend=test --ip-addresses rebusdnode0,rebusdnode1,rebusdnode2,rebusdnode3"; fi
 	docker-compose up -d
 endif
 
@@ -549,22 +549,22 @@ localnet-clean:
 localnet-unsafe-reset:
 	docker-compose down
 ifeq ($(OS),Windows_NT)
-	@docker run --rm -v $(CURDIR)\localnet-setup\node0\evmosd:evmos\Z evmosd/node "./evmosd unsafe-reset-all --home=/evmos"
-	@docker run --rm -v $(CURDIR)\localnet-setup\node1\evmosd:evmos\Z evmosd/node "./evmosd unsafe-reset-all --home=/evmos"
-	@docker run --rm -v $(CURDIR)\localnet-setup\node2\evmosd:evmos\Z evmosd/node "./evmosd unsafe-reset-all --home=/evmos"
-	@docker run --rm -v $(CURDIR)\localnet-setup\node3\evmosd:evmos\Z evmosd/node "./evmosd unsafe-reset-all --home=/evmos"
+	@docker run --rm -v $(CURDIR)\localnet-setup\node0\rebusd:rebus\Z rebusd/node "./rebusd unsafe-reset-all --home=/rebus"
+	@docker run --rm -v $(CURDIR)\localnet-setup\node1\rebusd:rebus\Z rebusd/node "./rebusd unsafe-reset-all --home=/rebus"
+	@docker run --rm -v $(CURDIR)\localnet-setup\node2\rebusd:rebus\Z rebusd/node "./rebusd unsafe-reset-all --home=/rebus"
+	@docker run --rm -v $(CURDIR)\localnet-setup\node3\rebusd:rebus\Z rebusd/node "./rebusd unsafe-reset-all --home=/rebus"
 else
-	@docker run --rm -v $(CURDIR)/localnet-setup/node0/evmosd:/evmos:Z evmosd/node "./evmosd unsafe-reset-all --home=/evmos"
-	@docker run --rm -v $(CURDIR)/localnet-setup/node1/evmosd:/evmos:Z evmosd/node "./evmosd unsafe-reset-all --home=/evmos"
-	@docker run --rm -v $(CURDIR)/localnet-setup/node2/evmosd:/evmos:Z evmosd/node "./evmosd unsafe-reset-all --home=/evmos"
-	@docker run --rm -v $(CURDIR)/localnet-setup/node3/evmosd:/evmos:Z evmosd/node "./evmosd unsafe-reset-all --home=/evmos"
+	@docker run --rm -v $(CURDIR)/localnet-setup/node0/rebusd:/rebus:Z rebusd/node "./rebusd unsafe-reset-all --home=/rebus"
+	@docker run --rm -v $(CURDIR)/localnet-setup/node1/rebusd:/rebus:Z rebusd/node "./rebusd unsafe-reset-all --home=/rebus"
+	@docker run --rm -v $(CURDIR)/localnet-setup/node2/rebusd:/rebus:Z rebusd/node "./rebusd unsafe-reset-all --home=/rebus"
+	@docker run --rm -v $(CURDIR)/localnet-setup/node3/rebusd:/rebus:Z rebusd/node "./rebusd unsafe-reset-all --home=/rebus"
 endif
 
 # Clean testnet
 localnet-show-logstream:
 	docker-compose logs --tail=1000 -f
 
-.PHONY: build-docker-local-evmos localnet-start localnet-stop
+.PHONY: build-docker-local-rebus localnet-start localnet-stop
 
 ###############################################################################
 ###                                Releasing                                ###

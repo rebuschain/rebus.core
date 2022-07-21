@@ -24,7 +24,7 @@ import (
 type GenesisTestSuite struct {
 	suite.Suite
 	ctx     sdk.Context
-	app     *app.Evmos
+	app     *app.Rebus
 	genesis types.GenesisState
 }
 

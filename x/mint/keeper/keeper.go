@@ -178,8 +178,11 @@ func (k Keeper) DistributeMintedCoin(ctx sdk.Context, mintedCoin sdk.Coin) error
 		return err
 	}
 
-	// change := sdk.NewCoins(mintedCoin).Sub(posRewardCoins).Sub(communityRewardCoins).Sub(incentiveCoins).Sub(ethicalCoins).Sub(treasuryCoins)
-	//
+	changeLeftCoins := sdk.NewCoins(mintedCoin).Sub(posRewardCoins).Sub(communityRewardCoins).Sub(incentiveCoins).Sub(ethicalCoins).Sub(treasuryCoins)
+	err = k.bankKeeper.SendCoinsFromModuleToModule(ctx, types.ModuleName, k.feeCollectorName, changeLeftCoins)
+	if err != nil {
+		return err
+	}
 
 	return err
 }

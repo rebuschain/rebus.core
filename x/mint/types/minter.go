@@ -46,30 +46,27 @@ func ValidateMinter(minter Minter) error {
 
 // PhaseInflationRate returns the inflation rate by phase.
 func (m Minter) PhaseInflationRate(phase uint64) sdk.Dec {
-	if 1 == 1 {
-		return sdk.NewDecWithPrec(25, 2)
-		// return sdk.ZeroDec()
-	}
 	switch {
-	case phase > 12:
+	case phase > 15:
 		return sdk.ZeroDec()
 
 	case phase == 1:
-		return sdk.NewDecWithPrec(40, 2)
+		return sdk.NewDecWithPrec(25, 2)
 
 	case phase == 2:
-		return sdk.NewDecWithPrec(20, 2)
+		return sdk.NewDecWithPrec(15, 2)
 
-	case phase == 3:
+	case phase == 3, phase == 4:
 		return sdk.NewDecWithPrec(10, 2)
 
+	case phase == 5, phase == 6, phase == 7, phase == 8, phase == 9, phase == 10:
+		return sdk.NewDecWithPrec(5, 2)
+
+	case phase == 11, phase == 12, phase == 13, phase == 14, phase == 15:
+		return sdk.NewDecWithPrec(2, 2)
+
 	default:
-		// Phase4:  9%
-		// Phase5:  8%
-		// Phase6:  7%
-		// ...
-		// Phase12: 1%
-		return sdk.NewDecWithPrec(13-int64(phase), 2)
+		return sdk.ZeroDec()
 	}
 }
 

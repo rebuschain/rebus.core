@@ -1,5 +1,5 @@
 {
-  "name": "evmos",
+  "name": "rebus",
   "version": "1.0.0",
   "description": "<!-- parent:   order: false -->",
   "main": "index.js",
@@ -15,12 +15,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tharsis/evmos.git"
+    "url": "git+https://github.com/rebuschain/rebus.core.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/tharsis/evmos/issues"
+    "url": "https://github.com/rebuschain/rebus.core/issues"
   },
-  "homepage": "https://github.com/tharsis/evmos#readme"
+  "homepage": "https://github.com/rebuschain/rebus.core#readme"
 }

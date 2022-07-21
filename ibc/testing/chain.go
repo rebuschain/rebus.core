@@ -23,8 +23,8 @@ import (
 	evmtypes "github.com/tharsis/ethermint/x/evm/types"
 )
 
-// ChainIDPrefix defines the default chain ID prefix for Evmos test chains
-var ChainIDPrefix = "evmos_9000-"
+// ChainIDPrefix defines the default chain ID prefix for Rebus test chains
+var ChainIDPrefix = "reb_3333-"
 
 func init() {
 	ibcgotesting.ChainIDPrefix = ChainIDPrefix

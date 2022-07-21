@@ -111,14 +111,10 @@ import (
 	feemarkettypes "github.com/tharsis/ethermint/x/feemarket/types"
 
 	// unnamed import of statik for swagger UI support
-	_ "github.com/rebuschain/rebus.core/v1/client/docs/statik"
+	//_ "github.com/rebuschain/rebus.core/v1/client/docs/statik"
 
 	"github.com/rebuschain/rebus.core/v1/app/ante"
-	v0 "github.com/rebuschain/rebus.core/v1/app/upgrades/v0"
 
-	"github.com/rebuschain/rebus.core/v1/x/claims"
-	claimskeeper "github.com/rebuschain/rebus.core/v1/x/claims/keeper"
-	claimstypes "github.com/rebuschain/rebus.core/v1/x/claims/types"
 	"github.com/rebuschain/rebus.core/v1/x/epochs"
 	epochskeeper "github.com/rebuschain/rebus.core/v1/x/epochs/keeper"
 	epochstypes "github.com/rebuschain/rebus.core/v1/x/epochs/types"
@@ -140,7 +136,7 @@ func init() {
 
 	DefaultNodeHome = filepath.Join(userHomeDir, ".rebusd")
 
-	// manually update the power reduction by replacing micro (u) -> atto (a) evmos
+	// manually update the power reduction by replacing micro (u) -> atto (a) rebus
 	sdk.DefaultPowerReduction = ethermint.PowerReduction
 }
 
@@ -169,7 +165,7 @@ var (
 		gov.NewAppModuleBasic(
 			paramsclient.ProposalHandler, distrclient.ProposalHandler, upgradeclient.ProposalHandler, upgradeclient.CancelProposalHandler,
 			ibcclientclient.UpdateClientProposalHandler, ibcclientclient.UpgradeProposalHandler,
-			// Evmos proposal types
+			// Rebus proposal types
 			erc20client.RegisterCoinProposalHandler,
 			erc20client.RegisterERC20ProposalHandler,
 			erc20client.ToggleTokenConversionProposalHandler,
@@ -190,23 +186,20 @@ var (
 		erc20.AppModuleBasic{},
 		// incentives.AppModuleBasic{},
 		epochs.AppModuleBasic{},
-		claims.AppModuleBasic{},
 	)
 
 	// module account permissions
 	maccPerms = map[string][]string{
 		authtypes.FeeCollectorName:     nil,
 		distrtypes.ModuleName:          nil,
-		minttypes.ModuleName:           {authtypes.Minter, authtypes.Burner},
+		minttypes.ModuleName:           {authtypes.Minter},
 		stakingtypes.BondedPoolName:    {authtypes.Burner, authtypes.Staking},
 		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 		evmtypes.ModuleName:            {authtypes.Minter, authtypes.Burner}, // used for secure addition and subtraction of balance using module account
 		// inflationtypes.ModuleName:      {authtypes.Minter},
-		erc20types.ModuleName:  {authtypes.Minter, authtypes.Burner},
-		claimstypes.ModuleName: nil,
-		"tempburnmod":          {authtypes.Burner},
+		erc20types.ModuleName: {authtypes.Minter, authtypes.Burner},
 		// incentivestypes.ModuleName:     {authtypes.Minter, authtypes.Burner},
 	}
 
@@ -214,20 +207,19 @@ var (
 	allowedReceivingModAcc = map[string]bool{
 		distrtypes.ModuleName: true,
 		minttypes.ModuleName:  true,
-		// incentivestypes.ModuleName: true,
 	}
 )
 
 var (
-	_ servertypes.Application = (*Evmos)(nil)
-	_ simapp.App              = (*Evmos)(nil)
-	_ ibctesting.TestingApp   = (*Evmos)(nil)
+	_ servertypes.Application = (*Rebus)(nil)
+	_ simapp.App              = (*Rebus)(nil)
+	_ ibctesting.TestingApp   = (*Rebus)(nil)
 )
 
-// Evmos implements an extended ABCI application. It is an application
+// Rebus implements an extended ABCI application. It is an application
 // that may process transactions through Ethereum's EVM running atop of
 // Tendermint consensus.
-type Evmos struct {
+type Rebus struct {
 	*baseapp.BaseApp
 
 	// encoding
@@ -268,13 +260,9 @@ type Evmos struct {
 	EvmKeeper       *evmkeeper.Keeper
 	FeeMarketKeeper feemarketkeeper.Keeper
 
-	// Evmos keepers
-	// InflationKeeper inflationkeeper.Keeper
-	ClaimsKeeper *claimskeeper.Keeper
+	// Rebus keepers
 	Erc20Keeper  erc20keeper.Keeper
-	// IncentivesKeeper incentiveskeeper.Keeper
 	EpochsKeeper epochskeeper.Keeper
-	// RecoveryKeeper *recoverykeeper.Keeper
 
 	// the module manager
 	mm *module.Manager
@@ -288,8 +276,8 @@ type Evmos struct {
 	tpsCounter *tpsCounter
 }
 
-// NewEvmos returns a reference to a new initialized Ethermint application.
-func NewEvmos(
+// NewRebus returns a reference to a new initialized Ethermint application.
+func NewRebus(
 	logger log.Logger,
 	db dbm.DB,
 	traceStore io.Writer,
@@ -300,7 +288,7 @@ func NewEvmos(
 	encodingConfig simappparams.EncodingConfig,
 	appOpts servertypes.AppOptions,
 	baseAppOptions ...func(*baseapp.BaseApp),
-) *Evmos {
+) *Rebus {
 	appCodec := encodingConfig.Marshaler
 	cdc := encodingConfig.Amino
 	interfaceRegistry := encodingConfig.InterfaceRegistry
@@ -328,19 +316,16 @@ func NewEvmos(
 		ibchost.StoreKey, ibctransfertypes.StoreKey,
 		// ethermint keys
 		evmtypes.StoreKey, feemarkettypes.StoreKey,
-		// evmos keys
-		// inflationtypes.StoreKey,
+		// Rebus keys
 		erc20types.StoreKey,
-		// incentivestypes.StoreKey,
 		epochstypes.StoreKey,
-		claimstypes.StoreKey,
 	)
 
 	// Add the EVM transient store key
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey, evmtypes.TransientKey, feemarkettypes.TransientKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
-	app := &Evmos{
+	app := &Rebus{
 		BaseApp:           bApp,
 		cdc:               cdc,
 		appCodec:          appCodec,
@@ -381,6 +366,8 @@ func NewEvmos(
 		appCodec, keys[distrtypes.StoreKey], app.GetSubspace(distrtypes.ModuleName), app.AccountKeeper, app.BankKeeper,
 		&stakingKeeper, authtypes.FeeCollectorName, app.ModuleAccountAddrs(),
 	)
+
+	// Create custom Rebus mintkeeper
 	app.MintKeeper = mintkeeper.NewKeeper(
 		appCodec, keys[minttypes.StoreKey], app.GetSubspace(minttypes.ModuleName), &stakingKeeper,
 		app.AccountKeeper, app.BankKeeper, app.DistrKeeper, authtypes.FeeCollectorName,
@@ -399,11 +386,6 @@ func NewEvmos(
 	tracer := cast.ToString(appOpts.Get(srvflags.EVMTracer))
 
 	// Create Ethermint keepers
-	/*
-		app.FeeMarketKeeper = feemarketkeeper.NewKeeper(
-			appCodec, keys[feemarkettypes.StoreKey], app.GetSubspace(feemarkettypes.ModuleName),
-		)
-	*/
 	app.FeeMarketKeeper = feemarketkeeper.NewKeeper(
 		appCodec, app.GetSubspace(feemarkettypes.ModuleName), keys[feemarkettypes.StoreKey], tkeys[feemarkettypes.TransientKey],
 	)
@@ -435,20 +417,6 @@ func NewEvmos(
 		&stakingKeeper, govRouter,
 	)
 
-	// Evmos Keeper
-	/*
-		app.InflationKeeper = inflationkeeper.NewKeeper(
-			keys[inflationtypes.StoreKey], appCodec, app.GetSubspace(inflationtypes.ModuleName),
-			app.AccountKeeper, app.BankKeeper, app.DistrKeeper, &stakingKeeper,
-			authtypes.FeeCollectorName,
-		)
-	*/
-
-	app.ClaimsKeeper = claimskeeper.NewKeeper(
-		appCodec, keys[claimstypes.StoreKey], app.GetSubspace(claimstypes.ModuleName),
-		app.AccountKeeper, app.BankKeeper, &stakingKeeper, app.DistrKeeper,
-	)
-
 	// register the staking hooks
 	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
 	// NOTE: Distr, Slashing and Claim must be created before calling the Hooks method to avoid returning a Keeper without its table generated
@@ -456,41 +424,23 @@ func NewEvmos(
 		stakingtypes.NewMultiStakingHooks(
 			app.DistrKeeper.Hooks(),
 			app.SlashingKeeper.Hooks(),
-			app.ClaimsKeeper.Hooks(),
 		),
 	)
-	/*
-		app.VestingKeeper = vestingkeeper.NewKeeper(
-			keys[vestingtypes.StoreKey], appCodec,
-			app.AccountKeeper, app.BankKeeper, app.StakingKeeper,
-		)
-	*/
+
+	// Rebus Keeper
 	app.Erc20Keeper = erc20keeper.NewKeeper(
 		keys[erc20types.StoreKey], appCodec, app.GetSubspace(erc20types.ModuleName),
 		app.AccountKeeper, app.BankKeeper, app.EvmKeeper,
 	)
 
-	/*
-		app.IncentivesKeeper = incentiveskeeper.NewKeeper(
-			keys[incentivestypes.StoreKey], appCodec, app.GetSubspace(incentivestypes.ModuleName),
-			app.AccountKeeper, app.BankKeeper, app.InflationKeeper, app.StakingKeeper, app.EvmKeeper,
-		)
-	*/
-
 	epochsKeeper := epochskeeper.NewKeeper(appCodec, keys[epochstypes.StoreKey])
 
 	app.EpochsKeeper = *epochsKeeper.SetHooks(
-		epochskeeper.NewMultiEpochHooks(
-		// insert epoch hooks receivers here
-		// app.IncentivesKeeper.Hooks(),
-		// app.InflationKeeper.Hooks(),
-		),
+		epochskeeper.NewMultiEpochHooks(),
 	)
 
 	app.GovKeeper = *govKeeper.SetHooks(
-		govtypes.NewMultiGovHooks(
-			app.ClaimsKeeper.Hooks(),
-		),
+		govtypes.NewMultiGovHooks(),
 	)
 
 	app.EvmKeeper = app.EvmKeeper.SetHooks(
@@ -499,54 +449,18 @@ func NewEvmos(
 		),
 	)
 
-	// Create Transfer Stack
-
-	// SendPacket, since it is originating from the application to core IBC:
-	// transferKeeper.SendPacket -> claim.SendPacket -> recovery.SendPacket -> channel.SendPacket
-
-	// RecvPacket, message that originates from core IBC and goes down to app, the flow is the otherway
-	// channel.RecvPacket -> recovery.OnRecvPacket -> claim.OnRecvPacket -> transfer.OnRecvPacket
-
 	app.TransferKeeper = ibctransferkeeper.NewKeeper(
 		appCodec, keys[ibctransfertypes.StoreKey], app.GetSubspace(ibctransfertypes.ModuleName),
-		app.ClaimsKeeper, // ICS4 Wrapper: claims IBC middleware
-		app.IBCKeeper.ChannelKeeper, &app.IBCKeeper.PortKeeper,
+		app.IBCKeeper.ChannelKeeper, app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper,
 		app.AccountKeeper, app.BankKeeper, scopedTransferKeeper,
 	)
-
-	/*
-		app.RecoveryKeeper = recoverykeeper.NewKeeper(
-			app.GetSubspace(recoverytypes.ModuleName),
-			app.AccountKeeper,
-			app.BankKeeper,
-			app.IBCKeeper.ChannelKeeper,
-			app.TransferKeeper,
-			app.ClaimsKeeper,
-		)
-	*/
-	// Set the ICS4 wrappers for claims and recovery middlewares
-	//app.RecoveryKeeper.SetICS4Wrapper(app.IBCKeeper.ChannelKeeper)
-	//app.ClaimsKeeper.SetICS4Wrapper(app.RecoveryKeeper)
-
-	// NOTE: ICS4 wrapper for Transfer Keeper already set
-
 	transferModule := transfer.NewAppModule(app.TransferKeeper)
 
-	// transfer stack contains (from top to bottom):
-	// - Recovery Middleware
-	// - Airdrop Claims Middleware
-	// - Transfer
+	transferIBCModule := transfer.NewIBCModule(app.TransferKeeper)
 
-	// create IBC module from bottom to top of stack
-	var transferStack porttypes.IBCModule
-
-	transferStack = transfer.NewIBCModule(app.TransferKeeper)
-	transferStack = claims.NewIBCMiddleware(*app.ClaimsKeeper, transferStack)
-	// transferStack = recovery.NewIBCMiddleware(*app.RecoveryKeeper, transferStack)
-
-	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
-	ibcRouter.AddRoute(ibctransfertypes.ModuleName, transferStack)
+	ibcRouter.AddRoute(ibctransfertypes.ModuleName, transferIBCModule)
 	app.IBCKeeper.SetRouter(ibcRouter)
 
 	// create evidence keeper with router
@@ -592,12 +506,9 @@ func NewEvmos(
 		// Ethermint app modules
 		evm.NewAppModule(app.EvmKeeper, app.AccountKeeper),
 		feemarket.NewAppModule(app.FeeMarketKeeper),
-		// Evmos app modules
-		// inflation.NewAppModule(app.InflationKeeper, app.AccountKeeper, app.StakingKeeper),
+		// Rebus app modules
 		erc20.NewAppModule(app.Erc20Keeper, app.AccountKeeper),
-		// incentives.NewAppModule(app.IncentivesKeeper, app.AccountKeeper),
 		epochs.NewAppModule(appCodec, app.EpochsKeeper),
-		claims.NewAppModule(appCodec, *app.ClaimsKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -631,7 +542,6 @@ func NewEvmos(
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
 		erc20types.ModuleName,
-		claimstypes.ModuleName,
 	)
 
 	// NOTE: fee market module must go last in order to retrieve the block gas used.
@@ -644,7 +554,6 @@ func NewEvmos(
 		feemarkettypes.ModuleName,
 		// Note: epochs' endblock should be "real" end of epochs, we keep epochs endblock at the end
 		epochstypes.ModuleName,
-		claimstypes.ModuleName,
 		// no-op modules
 		ibchost.ModuleName,
 		ibctransfertypes.ModuleName,
@@ -659,9 +568,8 @@ func NewEvmos(
 		feegrant.ModuleName,
 		paramstypes.ModuleName,
 		upgradetypes.ModuleName,
-		// Evmos modules
 		vestingtypes.ModuleName,
-		// inflationtypes.ModuleName,
+		// Rebus modules
 		erc20types.ModuleName,
 	)
 
@@ -678,7 +586,6 @@ func NewEvmos(
 		minttypes.ModuleName,
 		distrtypes.ModuleName,
 		// NOTE: staking requires the claiming hook
-		claimstypes.ModuleName,
 		stakingtypes.ModuleName,
 		slashingtypes.ModuleName,
 		govtypes.ModuleName,
@@ -695,13 +602,10 @@ func NewEvmos(
 		feegrant.ModuleName,
 		paramstypes.ModuleName,
 		upgradetypes.ModuleName,
-		// Evmos modules
 		vestingtypes.ModuleName,
-		// inflationtypes.ModuleName,
+		// Rebus modules
 		erc20types.ModuleName,
-		// incentivestypes.ModuleName,
 		epochstypes.ModuleName,
-		// recoverytypes.ModuleName,
 		// NOTE: crisis module must go at the end to check for invariants on each module
 		crisistypes.ModuleName,
 	)
@@ -795,24 +699,24 @@ func NewEvmos(
 }
 
 // Name returns the name of the App
-func (app *Evmos) Name() string { return app.BaseApp.Name() }
+func (app *Rebus) Name() string { return app.BaseApp.Name() }
 
 // BeginBlocker runs the Tendermint ABCI BeginBlock logic. It executes state changes at the beginning
 // of the new block for every registered module. If there is a registered fork at the current height,
 // BeginBlocker will schedule the upgrade plan and perform the state migration (if any).
-func (app *Evmos) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
+func (app *Rebus) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
 	// Perform any scheduled forks before executing the modules logic
 	app.ScheduleForkUpgrade(ctx)
 	return app.mm.BeginBlock(ctx, req)
 }
 
 // EndBlocker updates every end block
-func (app *Evmos) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
+func (app *Rebus) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
 	return app.mm.EndBlock(ctx, req)
 }
 
 // We are intentionally decomposing the DeliverTx method so as to calculate the transactions per second.
-func (app *Evmos) DeliverTx(req abci.RequestDeliverTx) (res abci.ResponseDeliverTx) {
+func (app *Rebus) DeliverTx(req abci.RequestDeliverTx) (res abci.ResponseDeliverTx) {
 	defer func() {
 		// TODO: Record the count along with the code and or reason so as to display
 		// in the transactions per second live dashboards.
@@ -827,7 +731,7 @@ func (app *Evmos) DeliverTx(req abci.RequestDeliverTx) (res abci.ResponseDeliver
 }
 
 // InitChainer updates at chain initialization
-func (app *Evmos) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
+func (app *Rebus) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
 	var genesisState simapp.GenesisState
 	if err := json.Unmarshal(req.AppStateBytes, &genesisState); err != nil {
 		panic(err)
@@ -837,12 +741,12 @@ func (app *Evmos) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.R
 }
 
 // LoadHeight loads state at a particular height
-func (app *Evmos) LoadHeight(height int64) error {
+func (app *Rebus) LoadHeight(height int64) error {
 	return app.LoadVersion(height)
 }
 
 // ModuleAccountAddrs returns all the app's module account addresses.
-func (app *Evmos) ModuleAccountAddrs() map[string]bool {
+func (app *Rebus) ModuleAccountAddrs() map[string]bool {
 	modAccAddrs := make(map[string]bool)
 	for acc := range maccPerms {
 		modAccAddrs[authtypes.NewModuleAddress(acc).String()] = true
@@ -853,7 +757,7 @@ func (app *Evmos) ModuleAccountAddrs() map[string]bool {
 
 // BlockedAddrs returns all the app's module account addresses that are not
 // allowed to receive external tokens.
-func (app *Evmos) BlockedAddrs() map[string]bool {
+func (app *Rebus) BlockedAddrs() map[string]bool {
 	blockedAddrs := make(map[string]bool)
 	for acc := range maccPerms {
 		blockedAddrs[authtypes.NewModuleAddress(acc).String()] = !allowedReceivingModAcc[acc]
@@ -862,64 +766,64 @@ func (app *Evmos) BlockedAddrs() map[string]bool {
 	return blockedAddrs
 }
 
-// LegacyAmino returns Evmos's amino codec.
+// LegacyAmino returns Rebus's amino codec.
 //
 // NOTE: This is solely to be used for testing purposes as it may be desirable
 // for modules to register their own custom testing types.
-func (app *Evmos) LegacyAmino() *codec.LegacyAmino {
+func (app *Rebus) LegacyAmino() *codec.LegacyAmino {
 	return app.cdc
 }
 
-// AppCodec returns Evmos's app codec.
+// AppCodec returns Rebus's app codec.
 //
 // NOTE: This is solely to be used for testing purposes as it may be desirable
 // for modules to register their own custom testing types.
-func (app *Evmos) AppCodec() codec.Codec {
+func (app *Rebus) AppCodec() codec.Codec {
 	return app.appCodec
 }
 
-// InterfaceRegistry returns Evmos's InterfaceRegistry
-func (app *Evmos) InterfaceRegistry() types.InterfaceRegistry {
+// InterfaceRegistry returns Rebus's InterfaceRegistry
+func (app *Rebus) InterfaceRegistry() types.InterfaceRegistry {
 	return app.interfaceRegistry
 }
 
 // GetKey returns the KVStoreKey for the provided store key.
 //
 // NOTE: This is solely to be used for testing purposes.
-func (app *Evmos) GetKey(storeKey string) *sdk.KVStoreKey {
+func (app *Rebus) GetKey(storeKey string) *sdk.KVStoreKey {
 	return app.keys[storeKey]
 }
 
 // GetTKey returns the TransientStoreKey for the provided store key.
 //
 // NOTE: This is solely to be used for testing purposes.
-func (app *Evmos) GetTKey(storeKey string) *sdk.TransientStoreKey {
+func (app *Rebus) GetTKey(storeKey string) *sdk.TransientStoreKey {
 	return app.tkeys[storeKey]
 }
 
 // GetMemKey returns the MemStoreKey for the provided mem key.
 //
 // NOTE: This is solely used for testing purposes.
-func (app *Evmos) GetMemKey(storeKey string) *sdk.MemoryStoreKey {
+func (app *Rebus) GetMemKey(storeKey string) *sdk.MemoryStoreKey {
 	return app.memKeys[storeKey]
 }
 
 // GetSubspace returns a param subspace for a given module name.
 //
 // NOTE: This is solely to be used for testing purposes.
-func (app *Evmos) GetSubspace(moduleName string) paramstypes.Subspace {
+func (app *Rebus) GetSubspace(moduleName string) paramstypes.Subspace {
 	subspace, _ := app.ParamsKeeper.GetSubspace(moduleName)
 	return subspace
 }
 
 // SimulationManager implements the SimulationApp interface
-func (app *Evmos) SimulationManager() *module.SimulationManager {
+func (app *Rebus) SimulationManager() *module.SimulationManager {
 	return app.sm
 }
 
 // RegisterAPIRoutes registers all application module routes with the provided
 // API server.
-func (app *Evmos) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig) {
+func (app *Rebus) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig) {
 	clientCtx := apiSvr.ClientCtx
 	rpc.RegisterRoutes(clientCtx, apiSvr.Router)
 
@@ -940,38 +844,38 @@ func (app *Evmos) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConf
 	}
 }
 
-func (app *Evmos) RegisterTxService(clientCtx client.Context) {
+func (app *Rebus) RegisterTxService(clientCtx client.Context) {
 	authtx.RegisterTxService(app.BaseApp.GRPCQueryRouter(), clientCtx, app.BaseApp.Simulate, app.interfaceRegistry)
 }
 
-func (app *Evmos) RegisterTendermintService(clientCtx client.Context) {
+func (app *Rebus) RegisterTendermintService(clientCtx client.Context) {
 	tmservice.RegisterTendermintService(app.BaseApp.GRPCQueryRouter(), clientCtx, app.interfaceRegistry)
 }
 
 // IBC Go TestingApp functions
 
 // GetBaseApp implements the TestingApp interface.
-func (app *Evmos) GetBaseApp() *baseapp.BaseApp {
+func (app *Rebus) GetBaseApp() *baseapp.BaseApp {
 	return app.BaseApp
 }
 
 // GetStakingKeeper implements the TestingApp interface.
-func (app *Evmos) GetStakingKeeper() stakingkeeper.Keeper {
+func (app *Rebus) GetStakingKeeper() stakingkeeper.Keeper {
 	return app.StakingKeeper
 }
 
 // GetIBCKeeper implements the TestingApp interface.
-func (app *Evmos) GetIBCKeeper() *ibckeeper.Keeper {
+func (app *Rebus) GetIBCKeeper() *ibckeeper.Keeper {
 	return app.IBCKeeper
 }
 
 // GetScopedIBCKeeper implements the TestingApp interface.
-func (app *Evmos) GetScopedIBCKeeper() capabilitykeeper.ScopedKeeper {
+func (app *Rebus) GetScopedIBCKeeper() capabilitykeeper.ScopedKeeper {
 	return app.ScopedIBCKeeper
 }
 
 // GetTxConfig implements the TestingApp interface.
-func (app *Evmos) GetTxConfig() client.TxConfig {
+func (app *Rebus) GetTxConfig() client.TxConfig {
 	cfg := encoding.MakeConfig(ModuleBasics)
 	return cfg.TxConfig
 }
@@ -1016,23 +920,12 @@ func initParamsKeeper(
 	// ethermint subspaces
 	paramsKeeper.Subspace(evmtypes.ModuleName)
 	paramsKeeper.Subspace(feemarkettypes.ModuleName)
-	// evmos subspaces
+	// Rebus subspaces
 	paramsKeeper.Subspace(erc20types.ModuleName)
-	paramsKeeper.Subspace(claimstypes.ModuleName)
 	return paramsKeeper
 }
 
-func (app *Evmos) setupUpgradeHandlers() {
-	// v0 upgrade handler
-	app.UpgradeKeeper.SetUpgradeHandler(
-		v0.UpgradeName,
-		v0.CreateUpgradeHandler(
-			app.mm, app.configurator,
-			app.BankKeeper,
-			app.MintKeeper,
-			app.AccountKeeper,
-		),
-	)
+func (app *Rebus) setupUpgradeHandlers() {
 
 	// When a planned update height is reached, the old binary will panic
 	// writing on disk the height and name of the update that triggered it
@@ -1049,9 +942,7 @@ func (app *Evmos) setupUpgradeHandlers() {
 	var storeUpgrades *storetypes.StoreUpgrades
 
 	switch upgradeInfo.Name {
-	case v0.UpgradeName:
 	}
-
 	if storeUpgrades != nil {
 		// configure store loader that checks if version == upgradeHeight and applies store upgrades
 		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, storeUpgrades))

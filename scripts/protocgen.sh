@@ -41,5 +41,5 @@ buf alpha protoc \
 $(find "$(pwd)/proto" -maxdepth 5 -name '*.proto')
 
 # move proto files to the right places
-cp -r github.com/tharsis/evmos/v*/x/* x/
-rm -rf github.com
+#cp -r github.com/rebuschain/rebus/v*/x/* x/
+#rm -rf github.com

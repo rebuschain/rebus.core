@@ -15,7 +15,6 @@ import (
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/rebuschain/rebus.core/v1/app"
-	claimstypes "github.com/rebuschain/rebus.core/v1/x/claims/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto/tmhash"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -33,7 +32,7 @@ type AnteTestSuite struct {
 	suite.Suite
 
 	ctx   sdk.Context
-	app   *app.Evmos
+	app   *app.Rebus
 	denom string
 }
 
@@ -46,7 +45,7 @@ func (suite *AnteTestSuite) SetupTest(isCheckTx bool) {
 	suite.app = app.Setup(isCheckTx, feemarkettypes.DefaultGenesisState())
 	suite.ctx = suite.app.BaseApp.NewContext(isCheckTx, tmproto.Header{
 		Height:          1,
-		ChainID:         "evmos_9001-1",
+		ChainID:         "rebus_3333-1",
 		Time:            time.Now().UTC(),
 		ProposerAddress: consAddress.Bytes(),
 
@@ -69,7 +68,7 @@ func (suite *AnteTestSuite) SetupTest(isCheckTx bool) {
 		LastResultsHash:    tmhash.Sum([]byte("last_result")),
 	})
 
-	suite.denom = claimstypes.DefaultClaimsDenom
+	//suite.denom = claimstypes.DefaultClaimsDenom
 	evmParams := suite.app.EvmKeeper.GetParams(suite.ctx)
 	evmParams.EvmDenom = suite.denom
 	suite.app.EvmKeeper.SetParams(suite.ctx, evmParams)

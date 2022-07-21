@@ -16,7 +16,7 @@ import (
 type MintTestSuite struct {
 	suite.Suite
 
-	app         *app.Evmos
+	app         *app.Rebus
 	ctx         sdk.Context
 	queryClient types.QueryClient
 }

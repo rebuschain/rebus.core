@@ -45,8 +45,9 @@ import (
 	ethermint "github.com/tharsis/ethermint/types"
 	evmtypes "github.com/tharsis/ethermint/x/evm/types"
 
+	rebushd "github.com/rebuschain/rebus.core/v1/crypto/keyring"
+
 	cmdcfg "github.com/rebuschain/rebus.core/v1/cmd/config"
-	evmoskr "github.com/rebuschain/rebus.core/v1/crypto/keyring"
 	"github.com/rebuschain/rebus.core/v1/testutil/network"
 )
 
@@ -127,7 +128,7 @@ or a similar setup where each node has a manually configurable IP address.
 Note, strict routability for addresses is turned off in the config file.
 
 Example:
-	evmosd testnet init-files --v 4 --output-dir ./.testnets --starting-ip-address 192.168.10.2
+	rebusd testnet init-files --v 4 --output-dir ./.testnets --starting-ip-address 192.168.10.2
 	`,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
@@ -171,7 +172,7 @@ and generate "v" directories, populated with necessary validator configuration f
 (private validator, genesis, config, etc.).
 
 Example:
-	evmosd testnet --v 4 --output-dir ./.testnets
+	rebusd testnet --v 4 --output-dir ./.testnets
 	`,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			args := startArgs{}
@@ -213,7 +214,7 @@ func initTestnetFiles(
 	args initArgs,
 ) error {
 	if args.chainID == "" {
-		args.chainID = fmt.Sprintf("evmos_%d-1", tmrand.Int63n(9999999999999)+1)
+		args.chainID = fmt.Sprintf("reb%d-1", tmrand.Int63n(9999999999999)+1)
 	}
 
 	nodeIDs := make([]string, args.numValidators)
@@ -265,7 +266,7 @@ func initTestnetFiles(
 		memo := fmt.Sprintf("%s@%s:26656", nodeIDs[i], ip)
 		genFiles = append(genFiles, nodeConfig.GenesisFile())
 
-		kb, err := keyring.New(sdk.KeyringServiceName(), args.keyringBackend, nodeDir, inBuf, evmoskr.Option())
+		kb, err := keyring.New(sdk.KeyringServiceName(), args.keyringBackend, nodeDir, inBuf, rebushd.Option())
 		if err != nil {
 			return err
 		}

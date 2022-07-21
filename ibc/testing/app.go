@@ -20,11 +20,11 @@ import (
 	ibcgotesting "github.com/cosmos/ibc-go/v3/testing"
 	"github.com/cosmos/ibc-go/v3/testing/simapp"
 
-	evmosapp "github.com/rebuschain/rebus.core/v1/app"
+	rebusapp "github.com/rebuschain/rebus.core/v1/app"
 	ethermint "github.com/tharsis/ethermint/types"
 )
 
-var DefaultTestingAppInit func() (ibcgotesting.TestingApp, map[string]json.RawMessage) = evmosapp.SetupTestingApp
+var DefaultTestingAppInit func() (ibcgotesting.TestingApp, map[string]json.RawMessage) = rebusapp.SetupTestingApp
 
 // SetupWithGenesisValSet initializes a new SimApp with a validator set and genesis accounts
 // that also act as delegators. For simplicity, each validator is bonded with a delegation

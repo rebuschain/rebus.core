@@ -22,7 +22,7 @@ If you follow these guidelines when reporting an issue to us, we commit to:
 
 ## Disclosure Process
 
-Tharsis uses the following disclosure process:
+Rebus uses the following disclosure process:
 
 1. Once a security report is received, the team works to verify the issue and confirm its severity level using [CVSS](https://nvd.nist.gov/vuln-metrics/cvss).
 2. The team determines the vulnerability’s potential impact on Rebus.

@@ -20,8 +20,8 @@ import (
 	ibcgotesting "github.com/cosmos/ibc-go/v3/testing"
 	"github.com/cosmos/ibc-go/v3/testing/simapp"
 
+	ethermint "github.com/evmos/ethermint/types"
 	rebusapp "github.com/rebuschain/rebus.core/v1/app"
-	ethermint "github.com/tharsis/ethermint/types"
 )
 
 var DefaultTestingAppInit func() (ibcgotesting.TestingApp, map[string]json.RawMessage) = rebusapp.SetupTestingApp

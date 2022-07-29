@@ -9,8 +9,8 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 
-	"github.com/tharsis/ethermint/tests"
-	evmtypes "github.com/tharsis/ethermint/x/evm/types"
+	"github.com/evmos/ethermint/tests"
+	evmtypes "github.com/evmos/ethermint/x/evm/types"
 
 	"github.com/rebuschain/rebus.core/v1/x/erc20/keeper"
 	"github.com/rebuschain/rebus.core/v1/x/erc20/types"

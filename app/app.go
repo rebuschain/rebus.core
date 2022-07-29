@@ -96,19 +96,19 @@ import (
 	ibctesting "github.com/cosmos/ibc-go/v3/testing"
 
 	// unnamed import of statik for swagger UI support
-	// _ "github.com/tharsis/ethermint/client/docs/statik"
-	"github.com/tharsis/ethermint/encoding"
+	// _ "github.com/evmos/ethermint/client/docs/statik"
+	"github.com/evmos/ethermint/encoding"
 
-	srvflags "github.com/tharsis/ethermint/server/flags"
-	ethermint "github.com/tharsis/ethermint/types"
-	"github.com/tharsis/ethermint/x/evm"
-	evmrest "github.com/tharsis/ethermint/x/evm/client/rest"
-	evmkeeper "github.com/tharsis/ethermint/x/evm/keeper"
-	evmtypes "github.com/tharsis/ethermint/x/evm/types"
+	srvflags "github.com/evmos/ethermint/server/flags"
+	ethermint "github.com/evmos/ethermint/types"
+	"github.com/evmos/ethermint/x/evm"
+	evmrest "github.com/evmos/ethermint/x/evm/client/rest"
+	evmkeeper "github.com/evmos/ethermint/x/evm/keeper"
+	evmtypes "github.com/evmos/ethermint/x/evm/types"
 
-	"github.com/tharsis/ethermint/x/feemarket"
-	feemarketkeeper "github.com/tharsis/ethermint/x/feemarket/keeper"
-	feemarkettypes "github.com/tharsis/ethermint/x/feemarket/types"
+	"github.com/evmos/ethermint/x/feemarket"
+	feemarketkeeper "github.com/evmos/ethermint/x/feemarket/keeper"
+	feemarkettypes "github.com/evmos/ethermint/x/feemarket/types"
 
 	// unnamed import of statik for swagger UI support
 	//_ "github.com/rebuschain/rebus.core/v1/client/docs/statik"

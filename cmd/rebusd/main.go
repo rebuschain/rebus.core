@@ -32,10 +32,6 @@ func setupConfig() {
 	// set the address prefixes
 	config := sdk.GetConfig()
 	cmdcfg.SetBech32Prefixes(config)
-	// TODO fix
-	// if err := cmdcfg.EnableObservability(); err != nil {
-	// 	panic(err)
-	// }
 	cmdcfg.SetBip44CoinType(config)
 	config.Seal()
 }

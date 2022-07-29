@@ -17,7 +17,7 @@ import (
 	tmversion "github.com/tendermint/tendermint/proto/tendermint/version"
 	"github.com/tendermint/tendermint/version"
 
-	evm "github.com/tharsis/ethermint/x/evm/types"
+	evm "github.com/evmos/ethermint/x/evm/types"
 
 	"github.com/rebuschain/rebus.core/v1/app"
 	"github.com/rebuschain/rebus.core/v1/x/epochs/types"

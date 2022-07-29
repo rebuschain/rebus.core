@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/cosmos/cosmos-sdk/snapshots"
@@ -31,12 +32,12 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
-	ethermintclient "github.com/tharsis/ethermint/client"
-	"github.com/tharsis/ethermint/client/debug"
-	"github.com/tharsis/ethermint/encoding"
-	ethermintserver "github.com/tharsis/ethermint/server"
-	servercfg "github.com/tharsis/ethermint/server/config"
-	srvflags "github.com/tharsis/ethermint/server/flags"
+	ethermintclient "github.com/evmos/ethermint/client"
+	"github.com/evmos/ethermint/client/debug"
+	"github.com/evmos/ethermint/encoding"
+	ethermintserver "github.com/evmos/ethermint/server"
+	servercfg "github.com/evmos/ethermint/server/config"
+	srvflags "github.com/evmos/ethermint/server/flags"
 
 	rebushd "github.com/rebuschain/rebus.core/v1/crypto/keyring"
 
@@ -87,6 +88,9 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 			}
 
 			customAppTemplate, customAppConfig := initAppConfig()
+
+			serverCtx := sdkserver.GetServerContextFromCmd(cmd)
+			serverCtx.Config.Consensus.TimeoutCommit = time.Millisecond * time.Duration(2000)
 
 			return sdkserver.InterceptConfigsPreRunHandler(cmd, customAppTemplate, customAppConfig)
 		},

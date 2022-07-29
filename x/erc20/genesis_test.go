@@ -13,8 +13,8 @@ import (
 	tmversion "github.com/tendermint/tendermint/proto/tendermint/version"
 	"github.com/tendermint/tendermint/version"
 
-	"github.com/tharsis/ethermint/tests"
-	feemarkettypes "github.com/tharsis/ethermint/x/feemarket/types"
+	"github.com/evmos/ethermint/tests"
+	feemarkettypes "github.com/evmos/ethermint/x/feemarket/types"
 
 	"github.com/rebuschain/rebus.core/v1/app"
 	"github.com/rebuschain/rebus.core/v1/x/erc20"

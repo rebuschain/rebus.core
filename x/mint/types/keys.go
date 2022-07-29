@@ -2,7 +2,7 @@ package types
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	ethermint "github.com/tharsis/ethermint/types"
+	ethermint "github.com/evmos/ethermint/types"
 )
 
 // MinterKey is the key to use for the keeper store.

@@ -33,6 +33,11 @@ import (
 	rebuscfg "github.com/rebuschain/rebus.core/v1/cmd/config"
 )
 
+const (
+	// FlagTimeoutCommit defines a flag to set timeout commit of node.
+	FlagTimeoutCommit = "timeout-commit"
+)
+
 type printInfo struct {
 	Moniker    string          `json:"moniker" yaml:"moniker"`
 	ChainID    string          `json:"chain_id" yaml:"chain_id"`
@@ -80,6 +85,12 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 			config := serverCtx.Config
 			config.SetRoot(clientCtx.HomeDir)
 
+			timeoutCommit, err := cmd.Flags().GetInt(FlagTimeoutCommit)
+			if err != nil {
+				return err
+			}
+			config.Consensus.TimeoutCommit = time.Duration(timeoutCommit) * time.Millisecond
+
 			// Set peers in and out to an 8:1 ratio to prevent choking
 			config.P2P.MaxNumInboundPeers = 240
 			config.P2P.MaxNumOutboundPeers = 30
@@ -97,6 +108,7 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 			if strings.Index(chainID, "reb_3333") != -1 {
 				seeds := []string{
 					"a6d710cd9baac9e95a55525d548850c91f140cd9@3.211.101.169:26656",
+					"c296ee829f137cfe020ff293b6fc7d7c3f5eeead@54.157.52.47:26656",
 				}
 				config.P2P.Seeds = strings.Join(seeds, ",")
 			}
@@ -173,6 +185,7 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 	cmd.Flags().BoolP(genutilcli.FlagOverwrite, "o", false, "overwrite the genesis.json file")
 	cmd.Flags().Bool(genutilcli.FlagRecover, false, "provide seed phrase to recover existing key instead of creating")
 	cmd.Flags().String(flags.FlagChainID, "", "genesis file chain-id, if left blank will be randomly created")
+	cmd.Flags().Int(FlagTimeoutCommit, 2000, "timeout commit of the node in ms")
 
 	return cmd
 }

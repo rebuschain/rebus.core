@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"strings"
 
-	yaml "gopkg.in/yaml.v2"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/rebuschain/rebus.core/v1/cmd/config"
@@ -53,10 +51,11 @@ func (p Params) Validate() error {
 }
 
 // String implements the Stringer interface.
+/*
 func (p Params) String() string {
 	out, _ := yaml.Marshal(p)
 	return string(out)
-}
+}*/
 
 // Implements params.ParamSet
 func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {

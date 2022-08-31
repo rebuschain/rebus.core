@@ -123,6 +123,10 @@ import (
 	erc20keeper "github.com/rebuschain/rebus.core/v1/x/erc20/keeper"
 	erc20types "github.com/rebuschain/rebus.core/v1/x/erc20/types"
 
+	"github.com/rebuschain/rebus.core/v1/x/claim"
+	claimkeeper "github.com/rebuschain/rebus.core/v1/x/claim/keeper"
+	claimtypes "github.com/rebuschain/rebus.core/v1/x/claim/types"
+
 	"github.com/rebuschain/rebus.core/v1/x/mint"
 	mintkeeper "github.com/rebuschain/rebus.core/v1/x/mint/keeper"
 	minttypes "github.com/rebuschain/rebus.core/v1/x/mint/types"
@@ -186,6 +190,7 @@ var (
 		erc20.AppModuleBasic{},
 		// incentives.AppModuleBasic{},
 		epochs.AppModuleBasic{},
+		claim.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -198,9 +203,8 @@ var (
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 		evmtypes.ModuleName:            {authtypes.Minter, authtypes.Burner}, // used for secure addition and subtraction of balance using module account
-		// inflationtypes.ModuleName:      {authtypes.Minter},
-		erc20types.ModuleName: {authtypes.Minter, authtypes.Burner},
-		// incentivestypes.ModuleName:     {authtypes.Minter, authtypes.Burner},
+		erc20types.ModuleName:          {authtypes.Minter, authtypes.Burner},
+		claimtypes.ModuleName:          nil,
 	}
 
 	// module accounts that are allowed to receive tokens
@@ -240,7 +244,6 @@ type Rebus struct {
 	CapabilityKeeper *capabilitykeeper.Keeper
 	StakingKeeper    stakingkeeper.Keeper
 	SlashingKeeper   slashingkeeper.Keeper
-	MintKeeper       mintkeeper.Keeper
 	DistrKeeper      distrkeeper.Keeper
 	GovKeeper        govkeeper.Keeper
 	CrisisKeeper     crisiskeeper.Keeper
@@ -261,8 +264,10 @@ type Rebus struct {
 	FeeMarketKeeper feemarketkeeper.Keeper
 
 	// Rebus keepers
+	MintKeeper   mintkeeper.Keeper
 	Erc20Keeper  erc20keeper.Keeper
 	EpochsKeeper epochskeeper.Keeper
+	ClaimKeeper  *claimkeeper.Keeper
 
 	// the module manager
 	mm *module.Manager
@@ -319,6 +324,7 @@ func NewRebus(
 		// Rebus keys
 		erc20types.StoreKey,
 		epochstypes.StoreKey,
+		claimtypes.StoreKey,
 	)
 
 	// Add the EVM transient store key
@@ -366,6 +372,8 @@ func NewRebus(
 		appCodec, keys[distrtypes.StoreKey], app.GetSubspace(distrtypes.ModuleName), app.AccountKeeper, app.BankKeeper,
 		&stakingKeeper, authtypes.FeeCollectorName, app.ModuleAccountAddrs(),
 	)
+
+	app.ClaimKeeper = claimkeeper.NewKeeper(appCodec, keys[claimtypes.StoreKey], app.AccountKeeper, app.BankKeeper, stakingKeeper, app.DistrKeeper)
 
 	// Create custom Rebus mintkeeper
 	app.MintKeeper = mintkeeper.NewKeeper(
@@ -424,6 +432,7 @@ func NewRebus(
 		stakingtypes.NewMultiStakingHooks(
 			app.DistrKeeper.Hooks(),
 			app.SlashingKeeper.Hooks(),
+			app.ClaimKeeper.Hooks(),
 		),
 	)
 
@@ -440,12 +449,15 @@ func NewRebus(
 	)
 
 	app.GovKeeper = *govKeeper.SetHooks(
-		govtypes.NewMultiGovHooks(),
+		govtypes.NewMultiGovHooks(
+			app.ClaimKeeper.Hooks(),
+		),
 	)
 
 	app.EvmKeeper = app.EvmKeeper.SetHooks(
 		evmkeeper.NewMultiEvmHooks(
 			app.Erc20Keeper.Hooks(),
+			app.ClaimKeeper.Hooks(),
 		),
 	)
 
@@ -509,6 +521,7 @@ func NewRebus(
 		// Rebus app modules
 		erc20.NewAppModule(app.Erc20Keeper, app.AccountKeeper),
 		epochs.NewAppModule(appCodec, app.EpochsKeeper),
+		claim.NewAppModule(appCodec, *app.ClaimKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -542,6 +555,7 @@ func NewRebus(
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
 		erc20types.ModuleName,
+		claimtypes.ModuleName,
 	)
 
 	// NOTE: fee market module must go last in order to retrieve the block gas used.
@@ -554,6 +568,7 @@ func NewRebus(
 		feemarkettypes.ModuleName,
 		// Note: epochs' endblock should be "real" end of epochs, we keep epochs endblock at the end
 		epochstypes.ModuleName,
+		claimtypes.ModuleName,
 		// no-op modules
 		ibchost.ModuleName,
 		ibctransfertypes.ModuleName,
@@ -586,6 +601,7 @@ func NewRebus(
 		minttypes.ModuleName,
 		distrtypes.ModuleName,
 		// NOTE: staking requires the claiming hook
+		claimtypes.ModuleName,
 		stakingtypes.ModuleName,
 		slashingtypes.ModuleName,
 		govtypes.ModuleName,
@@ -922,6 +938,7 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(feemarkettypes.ModuleName)
 	// Rebus subspaces
 	paramsKeeper.Subspace(erc20types.ModuleName)
+	paramsKeeper.Subspace(claimtypes.ModuleName)
 	return paramsKeeper
 }
 

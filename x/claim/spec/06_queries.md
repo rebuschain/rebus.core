@@ -20,24 +20,24 @@ service Query {
 
 ## CLI commands
 
-For the following commands, you can change `$(osmosisd keys show -a {your key name})` with the address directly.
+For the following commands, you can change `$(rebusd keys show -a {your key name})` with the address directly.
 
 Query the claim record for a given address
 
 ```sh
-osmosisd query claim claim-record $(osmosisd keys show -a {your key name})
+rebusd query claim claim-record $(rebusd keys show -a {your key name})
 ```
 
 Query the claimable amount that would be earned if a specific action is completed right now.
 
 ```sh
 
-osmosisd query claim claimable-for-action $(osmosisd keys show -a {your key name}) ActionAddLiquidity
+rebusd query claim claimable-for-action $(rebusd keys show -a {your key name}) ActionAddLiquidity
 ```
 
 Query the total claimable amount that would be earned if all remaining actions were completed right now.
 Note that even if the decay process hasn't begun yet, this is not always *exactly* the same as `InitialClaimableAmount`, due to rounding errors.
 
 ```sh
-osmosisd query claim total-claimable $(osmosisd keys show -a {your key name}) ActionAddLiquidity
+rebusd query claim total-claimable $(rebusd keys show -a {your key name}) ActionAddLiquidity
 ```

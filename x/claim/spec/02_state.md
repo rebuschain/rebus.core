@@ -32,25 +32,21 @@ When a user get airdrop for his/her action, claim record is created to prevent d
 ### State
 
 ```protobuf
+// GenesisState defines the claim module's genesis state.
 message GenesisState {
-  // balance of the claim module's account
-  cosmos.base.v1beta1.Coin module_account_balance = 1 [
-    (gogoproto.moretags) = "yaml:\"module_account_balance\"",
-    (gogoproto.nullable) = false
-  ];
-
   // params defines all the parameters of the module.
-  Params params = 2 [
+  Params params = 1 [
     (gogoproto.moretags) = "yaml:\"params\"",
     (gogoproto.nullable) = false
   ];
 
   // list of claim records, one for every airdrop recipient
-  repeated ClaimRecord claim_records = 3 [
+  repeated ClaimRecord claim_records = 2 [
     (gogoproto.moretags) = "yaml:\"claim_records\"",
     (gogoproto.nullable) = false
   ];
 }
+
 ```
 
-Claim module's state consists of `params`, `claim_records`, and `module_account_balance`.
+Claim module's state consists of `params`, `claim_records`.

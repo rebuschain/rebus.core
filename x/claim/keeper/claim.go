@@ -7,31 +7,6 @@ import (
 	"github.com/rebuschain/rebus.core/v1/x/claim/types"
 )
 
-// GetModuleAccountBalance gets the airdrop coin balance of module account
-/*
-func (k Keeper) GetModuleAccountAddress(ctx sdk.Context) sdk.AccAddress {
-	return k.accountKeeper.GetModuleAddress(types.ModuleName)
-}
-*/
-
-// GetModuleAccountBalance gets the airdrop coin balance of module account
-/*
-func (k Keeper) GetModuleAccountBalance(ctx sdk.Context) sdk.Coin {
-	moduleAccAddr := k.GetModuleAccountAddress(ctx)
-	params, _ := k.GetParams(ctx)
-	return k.bankKeeper.GetBalance(ctx, moduleAccAddr, params.ClaimDenom)
-}
-*/
-
-// SetModuleAccountBalance set balance of airdrop module
-/*
-func (k Keeper) CreateModuleAccount(ctx sdk.Context, amount sdk.Coin) {
-	moduleAcc := authtypes.NewEmptyModuleAccount(types.ModuleName, authtypes.Minter)
-	k.accountKeeper.SetModuleAccount(ctx, moduleAcc)
-
-	k.bankKeeper.MintCoins(ctx, types.ModuleName, sdk.NewCoins(amount))
-}
-*/
 func (k Keeper) EndAirdrop(ctx sdk.Context) error {
 	err := k.fundRemainingsToCommunity(ctx)
 	if err != nil {
@@ -158,7 +133,7 @@ func (k Keeper) GetClaimableAmountForAction(ctx sdk.Context, claimRecord types.C
 	}
 
 	elapsedAirdropTime := ctx.BlockTime().Sub(params.AirdropStartTime)
-	if elapsedAirdropTime <= params.DurationUntilDecay {
+	if elapsedAirdropTime <= params.AirdropDuration {
 		return InitialClaimablePerAction, nil
 	}
 

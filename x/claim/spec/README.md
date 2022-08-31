@@ -2,13 +2,13 @@
 
 ## Abstract
 
-The Osmosis claims module has users begin with a portion of their total airdrop allocation,
+The Rebus claim module has users begin with a portion of their total airdrop allocation,
 and then be able to automatically claim higher percentages as they perform certain tasks on-chain.
-Furthermore, these claimable assets 'expire' if not claimed.
-Users have two months (`DurationUntilDecay`) to claim their full airdrop amount.
-After two months, the reward amount available will decline over 4 months (`DurationOfDecay`) in real time, until it hits `0%` at 6 months from launch (`DurationUntilDecay + DurationOfDecay`).
 
-After 6 months from launch, all unclaimed tokens get sent to the community pool.
+Furthermore, these claimable assets 'expire' if not claimed.
+Users have 8 months (`AirdropDuration`) to claim their full airdrop amount.
+
+After 8 months from launch, all unclaimed tokens get sent to the community pool.
 
 ## Contents
 
@@ -30,13 +30,13 @@ There are 4 types of actions, each of which release another 20% of the airdrop a
 The 4 actions are as follows:
 
 ```golang
-ActionAddLiquidity  Action = 0
-ActionSwap          Action = 1
-ActionVote          Action = 2
-ActionDelegateStake Action = 3
+ActionDelegate Action = 0
+ActionVote     Action = 1
+ActionNftID    Action = 2
+ActionVault    Action = 3
 ```
 
-These actions are monitored by registring claim **hooks** to the governance, staking, gamm, and lockup modules.
+These actions are monitored by registring claim **hooks** to the staking, governance, interaction with NFTID (EVM app), and the Rebus Vault.
 This means that when you perform an action, the claims module will immediately unlock those coins if they are applicable.
 These actions can be performed in any order.
 
@@ -79,8 +79,7 @@ type Params struct {
     // Time that marks the beginning of the airdrop disbursal,
     // should be set to chain launch time.
     AirdropStartTime   time.Time
-    DurationUntilDecay time.Duration
-    DurationOfDecay    time.Duration
+    AirdropDuration time.Duration
     // denom of claimable asset
     ClaimDenom string
 }

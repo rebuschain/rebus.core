@@ -2,10 +2,10 @@ package types
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 type Actions []Action
@@ -16,12 +16,10 @@ const DefaultIndex uint64 = 1
 // DefaultGenesis returns the default Capability genesis state
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
-		ModuleAccountBalance: sdk.NewCoin(DefaultClaimDenom, sdk.ZeroInt()),
 		Params: Params{
-			AirdropStartTime:   time.Time{},
-			DurationUntilDecay: DefaultDurationUntilDecay, // 2 month
-			DurationOfDecay:    DefaultDurationOfDecay,    // 4 months
-			ClaimDenom:         DefaultClaimDenom,         // uosmo
+			AirdropStartTime: time.Time{},
+			AirdropDuration:  DefaultAirdropDuration,
+			ClaimDenom:       DefaultClaimDenom,
 		},
 		ClaimRecords: []ClaimRecord{},
 	}
@@ -41,15 +39,18 @@ func GetGenesisStateFromAppState(cdc codec.Codec, appState map[string]json.RawMe
 
 // Validate performs basic genesis state validation returning an error upon any
 // failure.
-func (gs GenesisState) Validate() error {
-	totalClaimable := sdk.Coins{}
+func (genState GenesisState) Validate() error {
+	seenClaims := make(map[string]bool)
 
-	for _, claimRecord := range gs.ClaimRecords {
-		totalClaimable = totalClaimable.Add(claimRecord.InitialClaimableAmount...)
+	for _, claimsRecord := range genState.ClaimRecords {
+		if seenClaims[claimsRecord.Address] {
+			return fmt.Errorf("duplicated claims record entry %s", claimsRecord.Address)
+		}
+		if err := claimsRecord.Validate(); err != nil {
+			return err
+		}
+		seenClaims[claimsRecord.Address] = true
 	}
 
-	if !totalClaimable.IsEqual(sdk.NewCoins(gs.ModuleAccountBalance)) {
-		return ErrIncorrectModuleAccountBalance
-	}
-	return nil
+	return genState.Params.Validate()
 }

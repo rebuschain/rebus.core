@@ -13,14 +13,6 @@ option go_package = "github.com/rebuschain/rebus.core/v1/x/claim/types";
 
 // GenesisState defines the claim module's genesis state.
 message GenesisState {
-  // balance of the claim module's account
-  /*
-  cosmos.base.v1beta1.Coin module_account_balance = 1 [
-    (gogoproto.moretags) = "yaml:\"module_account_balance\"",
-    (gogoproto.nullable) = false
-  ];
-  */
-  
   // params defines all the parameters of the module.
   Params params = 1 [
     (gogoproto.moretags) = "yaml:\"params\"",

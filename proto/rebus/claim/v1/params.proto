@@ -23,4 +23,6 @@ message Params {
   ];
   // denom of claimable asset
   string claim_denom = 3;
+  // claim flag enable/disable
+  bool claim_enabled = 4;
 }

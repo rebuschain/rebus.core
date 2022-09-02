@@ -14,6 +14,10 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) {
 		panic(err)
 	}
 
+	if !params.ClaimEnabled {
+		return
+	}
+
 	// End Airdrop
 	goneTime := ctx.BlockTime().Sub(params.AirdropStartTime)
 	if goneTime > params.AirdropDuration {

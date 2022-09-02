@@ -28,4 +28,6 @@ message Params {
   string mint_denom = 1;
   // expected blocks per year
   uint64 blocks_per_year = 2 [(gogoproto.moretags) = "yaml:\"blocks_per_year\""];
+  // parameter to enable and disble the minter
+  bool mint_enabled = 3;
 }

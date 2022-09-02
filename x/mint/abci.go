@@ -23,6 +23,11 @@ func BeginBlocker(ctx sdk.Context, k keeper.Keeper) {
 
 	// fetch stored params
 	params := k.GetParams(ctx)
+
+	if !params.MintEnabled {
+		return
+	}
+
 	currentBlock := uint64(ctx.BlockHeight())
 	nextPhase := minter.NextPhase(params, currentBlock)
 

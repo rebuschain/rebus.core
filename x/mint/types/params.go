@@ -14,6 +14,7 @@ import (
 var (
 	KeyMintDenom     = []byte("MintDenom")
 	KeyBlocksPerYear = []byte("BlocksPerYear")
+	KeyMintEnabled   = []byte("MintEnabled")
 )
 
 // ParamTable for minting module.
@@ -22,11 +23,12 @@ func ParamKeyTable() paramtypes.KeyTable {
 }
 
 func NewParams(
-	mintDenom string, blocksPerYear uint64,
+	mintDenom string, blocksPerYear uint64, mintEnabled bool,
 ) Params {
 	return Params{
 		MintDenom:     mintDenom,
 		BlocksPerYear: blocksPerYear,
+		MintEnabled:   mintEnabled,
 	}
 }
 
@@ -35,6 +37,7 @@ func DefaultParams() Params {
 	return Params{
 		MintDenom:     config.BaseDenom,
 		BlocksPerYear: uint64(60 * 60 * 8766 / 5), // assuming 5 second block times
+		MintEnabled:   false,
 	}
 }
 
@@ -47,7 +50,7 @@ func (p Params) Validate() error {
 		return err
 	}
 
-	return nil
+	return validateBool(p.MintEnabled)
 }
 
 // String implements the Stringer interface.
@@ -62,6 +65,7 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
 		paramtypes.NewParamSetPair(KeyMintDenom, &p.MintDenom, validateMintDenom),
 		paramtypes.NewParamSetPair(KeyBlocksPerYear, &p.BlocksPerYear, validateBlocksPerYear),
+		paramtypes.NewParamSetPair(KeyMintEnabled, &p.MintEnabled, validateBool),
 	}
 }
 
@@ -89,6 +93,15 @@ func validateBlocksPerYear(i interface{}) error {
 
 	if v == 0 {
 		return fmt.Errorf("blocks per year must be positive: %d", v)
+	}
+
+	return nil
+}
+
+func validateBool(i interface{}) error {
+	_, ok := i.(bool)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
 	}
 
 	return nil

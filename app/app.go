@@ -373,7 +373,10 @@ func NewRebus(
 		&stakingKeeper, authtypes.FeeCollectorName, app.ModuleAccountAddrs(),
 	)
 
-	app.ClaimKeeper = claimkeeper.NewKeeper(appCodec, keys[claimtypes.StoreKey], app.AccountKeeper, app.BankKeeper, stakingKeeper, app.DistrKeeper)
+	app.ClaimKeeper = claimkeeper.NewKeeper(
+		appCodec, keys[claimtypes.StoreKey], app.GetSubspace(claimtypes.ModuleName),
+		app.AccountKeeper, app.BankKeeper, stakingKeeper, app.DistrKeeper,
+	)
 
 	// Create custom Rebus mintkeeper
 	app.MintKeeper = mintkeeper.NewKeeper(

@@ -20,6 +20,7 @@ func DefaultGenesis() *GenesisState {
 			AirdropStartTime: time.Time{},
 			AirdropDuration:  DefaultAirdropDuration,
 			ClaimDenom:       DefaultClaimDenom,
+			ClaimEnabled:     false,
 		},
 		ClaimRecords: []ClaimRecord{},
 	}

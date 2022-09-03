@@ -126,6 +126,8 @@ import (
 	"github.com/rebuschain/rebus.core/v1/x/mint"
 	mintkeeper "github.com/rebuschain/rebus.core/v1/x/mint/keeper"
 	minttypes "github.com/rebuschain/rebus.core/v1/x/mint/types"
+
+	upgradeV1 "github.com/rebuschain/rebus.core/v1/app/upgrades/v1"
 )
 
 func init() {
@@ -939,9 +941,16 @@ func (app *Rebus) setupUpgradeHandlers() {
 		return
 	}
 
+	app.UpgradeKeeper.SetUpgradeHandler(
+		upgradeV1.UpgradeName,
+		upgradeV1.CreateUpgradeHandler(app.mm, app.configurator),
+	)
+
 	var storeUpgrades *storetypes.StoreUpgrades
 
 	switch upgradeInfo.Name {
+	case upgradeV1.UpgradeName:
+		// no store upgrades in upgradeV1
 	}
 	if storeUpgrades != nil {
 		// configure store loader that checks if version == upgradeHeight and applies store upgrades

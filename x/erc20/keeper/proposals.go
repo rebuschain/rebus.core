@@ -45,13 +45,11 @@ func (k Keeper) RegisterCoin(
 			sdkerrors.ErrInvalidCoins, "base denomination '%s' cannot have a supply of 0", coinMetadata.Base,
 		)
 	}
-
 	if err := k.verifyMetadata(ctx, coinMetadata); err != nil {
 		return nil, sdkerrors.Wrapf(
 			types.ErrInternalTokenPair, "coin metadata is invalid %s", coinMetadata.Name,
 		)
 	}
-
 	addr, err := k.DeployERC20Contract(ctx, coinMetadata)
 	if err != nil {
 		return nil, sdkerrors.Wrap(
@@ -210,7 +208,6 @@ func (k Keeper) verifyMetadata(
 		k.bankKeeper.SetDenomMetaData(ctx, coinMetadata)
 		return nil
 	}
-
 	// If it already existed, check that is equal to what is stored
 	return types.EqualMetadata(meta, coinMetadata)
 }

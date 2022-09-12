@@ -31,9 +31,9 @@ const (
 	ComRatio = "0.05"
 )
 
-var TreasuryAddressList = [1]string{"rebus1kr9etd0k4se82regqrxkhjvpstl2u9yd2cptp4"}
-var EthicalAddressList = [1]string{"rebus1l4l243c8mee7kh6spawlz6zzad745j2vlrdmdq"}
-var IncentiveAddressList = [1]string{"rebus1hzm429073g3mumg2dt3v67sfsnnmshq6nrufy2"}
+var TreasuryAddressList = [1]string{"rebus1yfn2z9klucnuvjvdgp42h8qqafstweckeactmg"}
+var EthicalAddressList = [1]string{"rebus1yzj9fsh7mg2q3hjs42dvxhggrgqf8tgc8r2qfj"}
+var IncentiveAddressList = [1]string{"rebus13uggc2mynhecv9zpvtmy4gqsmmxeyle48wt628"}
 
 var PosRewardProportion sdk.Dec
 var TreasuryProportion sdk.Dec
@@ -41,7 +41,7 @@ var IncentiveProportion sdk.Dec
 var EthicalProportion sdk.Dec
 var CommunityProportion sdk.Dec
 
-var PosAllocation = sdk.NewInt(585_000_000).Mul(ethermint.PowerReduction)
+var PosAllocation = sdk.NewInt(635_708_034).Mul(ethermint.PowerReduction)
 
 func init() {
 	PosRewardProportion, _ = sdk.NewDecFromStr(PosRatio)

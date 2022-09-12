@@ -10,11 +10,24 @@ import (
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 )
 
-func (k Keeper) AfterProposalVote(ctx sdk.Context, proposalID uint64, voterAddr sdk.AccAddress) {
+func (k Keeper) isClaimActive(ctx sdk.Context) bool {
+	params, _ := k.GetParams(ctx)
+	if !params.ClaimEnabled {
+		return false
+	}
+	return true
+}
 
+func (k Keeper) AfterProposalVote(ctx sdk.Context, proposalID uint64, voterAddr sdk.AccAddress) {
+	if !k.isClaimActive(ctx) {
+		return
+	}
 	claimRecord, err := k.GetClaimRecord(ctx, voterAddr)
 	if err != nil {
 		panic(err.Error())
+	}
+	if claimRecord.Address == "" {
+		return
 	}
 
 	_, err = k.ClaimCoinsForAction(ctx, claimRecord, voterAddr, types.ActionVote)
@@ -24,10 +37,15 @@ func (k Keeper) AfterProposalVote(ctx sdk.Context, proposalID uint64, voterAddr 
 }
 
 func (k Keeper) AfterDelegationModified(ctx sdk.Context, delAddr sdk.AccAddress, valAddr sdk.ValAddress) {
-
+	if !k.isClaimActive(ctx) {
+		return
+	}
 	claimRecord, err := k.GetClaimRecord(ctx, delAddr)
 	if err != nil {
 		panic(err.Error())
+	}
+	if claimRecord.Address == "" {
+		return
 	}
 
 	_, err = k.ClaimCoinsForAction(ctx, claimRecord, delAddr, types.ActionDelegate)

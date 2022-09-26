@@ -27,7 +27,7 @@ require (
 	go.opencensus.io v0.23.0
 	google.golang.org/genproto v0.0.0-20220725144611-272f38e5d71b
 	google.golang.org/grpc v1.48.0
-	google.golang.org/protobuf v1.28.0
+	google.golang.org/protobuf v1.28.0 // indirect
 )
 
 require (
@@ -164,7 +164,7 @@ require (
 
 replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.1.7-0.20210622111912-ef00f8ac3d76
-	github.com/cosmos/ibc-go/v3 v3.2.0 => github.com/rebuschain/ibc-go/v3 v3.2.0-1
+	github.com/cosmos/ibc-go/v3 v3.2.0 => github.com/rebuschain/ibc-go/v3 v3.2.0-2
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	google.golang.org/grpc => google.golang.org/grpc v1.33.2
 )

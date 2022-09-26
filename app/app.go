@@ -687,6 +687,7 @@ func NewRebus(
 		FeeMarketKeeper: app.FeeMarketKeeper,
 		SignModeHandler: encodingConfig.TxConfig.SignModeHandler(),
 		SigGasConsumer:  SigVerificationGasConsumer,
+		Cdc:             appCodec,
 		MaxTxGasWanted:  maxGasWanted,
 	}
 
@@ -962,7 +963,7 @@ func (app *Rebus) setupUpgradeHandlers() {
 	}
 	app.UpgradeKeeper.SetUpgradeHandler(
 		upgradeV1.UpgradeName,
-		upgradeV1.CreateUpgradeHandler(app.mm, app.configurator),
+		upgradeV1.CreateUpgradeHandler(app.mm, app.configurator, app.StakingKeeper),
 	)
 	var storeUpgrades *storetypes.StoreUpgrades
 

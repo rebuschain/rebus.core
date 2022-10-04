@@ -13,17 +13,17 @@ option go_package = "github.com/rebuschain/rebus.core/v1/x/erc20/types";
 service Query {
   // TokenPairs retrieves registered token pairs
   rpc TokenPairs(QueryTokenPairsRequest) returns (QueryTokenPairsResponse) {
-    option (google.api.http).get = "/rebuschain/erc20/v1/token_pairs";
+    option (google.api.http).get = "/rebus/erc20/v1/token_pairs";
   }
 
   // TokenPair retrieves a registered token pair
   rpc TokenPair(QueryTokenPairRequest) returns (QueryTokenPairResponse) {
-    option (google.api.http).get = "/rebuschain/erc20/v1/token_pairs/{token}";
+    option (google.api.http).get = "/rebus/erc20/v1/token_pairs/{token}";
   }
 
   // Params retrieves the erc20 module params
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/rebuschain/erc20/v1/params";
+    option (google.api.http).get = "/rebus/erc20/v1/params";
   }
 }
 

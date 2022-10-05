@@ -187,6 +187,24 @@ func (k Keeper) DistributeMintedCoin(ctx sdk.Context, mintedCoin sdk.Coin) error
 	return err
 }
 
+// GetInflationRate returns the current inflation rate.
+func (k Keeper) GetInflationRate(ctx sdk.Context) sdk.Dec {
+
+	mintDenom := k.GetParams(ctx).MintDenom
+	circulatingSupply := k.bankKeeper.GetSupply(ctx, mintDenom).Amount.ToDec()
+	if circulatingSupply.IsZero() {
+		return sdk.ZeroDec()
+	}
+
+	minter := k.GetMinter(ctx)
+	annualProvision := minter.AnnualProvisions
+	if annualProvision.IsZero() {
+		return sdk.ZeroDec()
+	}
+
+	return annualProvision.Quo(circulatingSupply)
+}
+
 // AddCollectedFees implements an alias call to the underlying supply keeper's
 // AddCollectedFees to be used in BeginBlocker.
 func (k Keeper) AddCollectedFees(ctx sdk.Context, fees sdk.Coins) error {

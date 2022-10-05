@@ -20,9 +20,10 @@ func (k Keeper) Params(c context.Context, _ *types.QueryParamsRequest) (*types.Q
 // Inflation returns minter.Inflation of the mint module.
 func (k Keeper) Inflation(c context.Context, _ *types.QueryInflationRequest) (*types.QueryInflationResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
-	minter := k.GetMinter(ctx)
 
-	return &types.QueryInflationResponse{Inflation: minter.Inflation}, nil
+	inflationRate := k.GetInflationRate(ctx)
+
+	return &types.QueryInflationResponse{Inflation: inflationRate}, nil
 }
 
 // AnnualProvisions returns minter.AnnualProvisions of the mint module.

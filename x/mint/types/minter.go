@@ -87,8 +87,8 @@ func (m Minter) NextPhase(params Params, currentBlock uint64) uint64 {
 
 // NextAnnualProvisions returns the annual provisions based on current total
 // supply and inflation rate.
-func (m Minter) NextAnnualProvisions(_ Params, totalSupply sdk.Int) sdk.Dec {
-	return m.Inflation.MulInt(totalSupply)
+func (m Minter) NextAnnualProvisions(_ Params, posSupply sdk.Int) sdk.Dec {
+	return m.Inflation.MulInt(posSupply)
 }
 
 // BlockProvision returns the provisions for a block based on the annual

@@ -540,8 +540,6 @@ github.com/ethereum/go-ethereum v1.10.16 h1:3oPrumn0bCW/idjcxMn5YYVCdK7VzJYIvwGZ
 github.com/ethereum/go-ethereum v1.10.16/go.mod h1:Anj6cxczl+AHy63o4X9O8yWNHuN5wMpfb8MAnHkWn7Y=
 github.com/ettle/strcase v0.1.1/go.mod h1:hzDLsPC7/lwKyBOywSHEP89nt2pDgdy+No1NBA9o9VY=
 github.com/evanphx/json-patch v4.9.0+incompatible/go.mod h1:50XU6AFN0ol/bzJsmQLiYLvXMP4fmwYFNcr97nuDLSk=
-github.com/evmos/ethermint v0.17.2 h1:OaXQmhKyKBw7EyR6JJaA6x9cApi3krqhYcKK1VuDOgo=
-github.com/evmos/ethermint v0.17.2/go.mod h1:BmXULZy8lbld5KgNE0zM4b7Dy1irPpL6nsDH11SMNzQ=
 github.com/facebookgo/ensure v0.0.0-20160127193407-b4ab57deab51/go.mod h1:Yg+htXGokKKdzcwhuNDwVvN+uBxDGXJ7G/VN1d8fa64=
 github.com/facebookgo/ensure v0.0.0-20200202191622-63f1cf65ac4c h1:8ISkoahWXwZR41ois5lSJBSVw4D0OV19Ht/JSTzvSv0=
 github.com/facebookgo/stack v0.0.0-20160209184415-751773369052 h1:JWuenKqqX8nojtoVVWjGfOF9635RETekkoH6Cc9SX0A=
@@ -1417,6 +1415,8 @@ github.com/rcrowley/go-metrics v0.0.0-20200313005456-10cdbea86bc0/go.mod h1:bCqn
 github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 h1:N/ElC8H3+5XpJzTSTfLsJV/mx9Q9g7kxmchpfZyxgzM=
 github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475/go.mod h1:bCqnVzQkZxMG4s8nGwiZ5l3QUCyqpo9Y+/ZMZ9VjZe4=
 github.com/rdegges/go-ipify v0.0.0-20150526035502-2d94a6a86c40/go.mod h1:j4c6zEU0eMG1oiZPUy+zD4ykX0NIpjZAEOEAviTWC18=
+github.com/rebuschain/ethermint v0.17.2-rebus-v17.3 h1:5mRJ4/u/MmYQBJZvzDu8kxA03B33IQZO5j4LH3BQJ8Q=
+github.com/rebuschain/ethermint v0.17.2-rebus-v17.3/go.mod h1:taXtl3ot7FiX7CWCK7hrzM1K0dPXELPiIOLH6RwHuDM=
 github.com/rebuschain/ibc-go/v3 v3.2.0-2 h1:fZYtI9wFHfg9e/JVSn48fNzurDhJgBI8b3Fqxb/xInw=
 github.com/rebuschain/ibc-go/v3 v3.2.0-2/go.mod h1:DrDYXJjWNwgv72cK1Il+BegtyGIDXcx+cnJwWGzve6o=
 github.com/regen-network/cosmos-proto v0.3.1 h1:rV7iM4SSFAagvy8RiyhiACbWEGotmqzywPxOvwMdxcg=

@@ -11,7 +11,7 @@ import (
 
 func TestParamChangest(t *testing.T) {
 	s := rand.NewSource(1)
-	r := rand.New(s)
+	r := rand.New(s) //nolint:gosec // NOTE: use of weak random number generator
 
 	expected := []struct {
 		composedKey string

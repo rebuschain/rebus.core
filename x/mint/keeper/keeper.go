@@ -120,7 +120,7 @@ func (k Keeper) MintCoins(ctx sdk.Context, newCoins sdk.Coins) error {
 	return k.bankKeeper.MintCoins(ctx, types.ModuleName, newCoins)
 }
 
-func (k Keeper) getAddress(ctx sdk.Context, listAddress []string) (sdk.AccAddress, error) {
+func (k Keeper) getAddress(ctx sdk.Context, listAddress []string) (sdk.AccAddress, error) { //nolint:unparam
 	strAddress := listAddress[0]
 	address, err := sdk.AccAddressFromBech32(strAddress)
 	if err != nil {

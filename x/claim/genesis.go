@@ -26,7 +26,7 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	*/
 
 	k.SetParams(ctx, genState.Params)
-	k.SetClaimRecords(ctx, genState.ClaimRecords)
+	_ = k.SetClaimRecords(ctx, genState.ClaimRecords)
 }
 
 // ExportGenesis returns the capability module's exported genesis.

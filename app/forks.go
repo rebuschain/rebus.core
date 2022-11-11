@@ -17,7 +17,7 @@ import (
 func (app *Rebus) ScheduleForkUpgrade(ctx sdk.Context) {
 	// NOTE: there are no testnet forks for the existing versions
 
-	if !types.IsMainnet(ctx.ChainID()) {
+	if !types.IsMainnet(ctx.ChainID()) { //nolint:staticcheck
 		return
 	}
 	/*
@@ -45,5 +45,4 @@ func (app *Rebus) ScheduleForkUpgrade(ctx sdk.Context) {
 				),
 			)
 		}*/
-
 }

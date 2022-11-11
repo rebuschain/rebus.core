@@ -48,10 +48,10 @@ func (suite *KeeperTestSuite) TestConvertCoinNativeCoin() {
 			10,
 			10,
 			func(erc20 common.Address) {
-				stateDb := suite.StateDB()
-				ok := stateDb.Suicide(erc20)
+				stateDB := suite.StateDB()
+				ok := stateDB.Suicide(erc20)
 				suite.Require().True(ok)
-				suite.Require().NoError(stateDb.Commit())
+				suite.Require().NoError(stateDB.Commit())
 			},
 			func() {},
 			true,
@@ -415,10 +415,10 @@ func (suite *KeeperTestSuite) TestConvertERC20NativeERC20() {
 			10,
 			10,
 			func(erc20 common.Address) {
-				stateDb := suite.StateDB()
-				ok := stateDb.Suicide(erc20)
+				stateDB := suite.StateDB()
+				ok := stateDB.Suicide(erc20)
 				suite.Require().True(ok)
-				suite.Require().NoError(stateDb.Commit())
+				suite.Require().NoError(stateDB.Commit())
 			},
 			func() {},
 			contractMinterBurner,

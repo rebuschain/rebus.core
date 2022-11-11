@@ -111,7 +111,7 @@ func (suite *KeeperTestSuite) setupRegisterIBCVoucher() (banktypes.Metadata, *ty
 	return validMetadata, pair
 }
 
-func (suite KeeperTestSuite) TestRegisterCoin() {
+func (suite KeeperTestSuite) TestRegisterCoin() { //nolint:govet // copying locks here is fine, it's a test.
 	metadata := banktypes.Metadata{
 		Description: "description",
 		Base:        cosmosTokenBase,
@@ -289,7 +289,7 @@ func (suite KeeperTestSuite) TestRegisterCoin() {
 	}
 }
 
-func (suite KeeperTestSuite) TestRegisterERC20() {
+func (suite KeeperTestSuite) TestRegisterERC20() { //nolint:govet // copying locks here is fine, it's a test.
 	var (
 		contractAddr common.Address
 		pair         types.TokenPair
@@ -325,7 +325,7 @@ func (suite KeeperTestSuite) TestRegisterERC20() {
 		{
 			"meta data already stored",
 			func() {
-				suite.app.Erc20Keeper.CreateCoinMetadata(suite.ctx, contractAddr)
+				suite.app.Erc20Keeper.CreateCoinMetadata(suite.ctx, contractAddr) //nolint:errcheck
 			},
 			false,
 		},
@@ -373,7 +373,7 @@ func (suite KeeperTestSuite) TestRegisterERC20() {
 				// Denom units
 				suite.Require().Equal(len(metadata.DenomUnits), 2)
 				suite.Require().Equal(coinName, metadata.DenomUnits[0].Denom)
-				suite.Require().Equal(uint32(zeroExponent), metadata.DenomUnits[0].Exponent)
+				suite.Require().Equal(zeroExponent, metadata.DenomUnits[0].Exponent)
 				suite.Require().Equal(types.SanitizeERC20Name(erc20Name), metadata.DenomUnits[1].Denom)
 				// Custom exponent at contract creation matches coin with token
 				suite.Require().Equal(metadata.DenomUnits[1].Exponent, uint32(cosmosDecimals))
@@ -388,7 +388,7 @@ func (suite *KeeperTestSuite) TestRegisterIBCVoucher() {
 	suite.setupRegisterIBCVoucher()
 }
 
-func (suite KeeperTestSuite) TestToggleConverision() {
+func (suite KeeperTestSuite) TestToggleConverision() { //nolint:govet // copying locks here is fine, it's a test.
 	var (
 		contractAddr common.Address
 		id           []byte

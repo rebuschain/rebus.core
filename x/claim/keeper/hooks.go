@@ -12,10 +12,8 @@ import (
 
 func (k Keeper) isClaimActive(ctx sdk.Context) bool {
 	params, _ := k.GetParams(ctx)
-	if !params.ClaimEnabled {
-		return false
-	}
-	return true
+
+	return params.ClaimEnabled
 }
 
 func (k Keeper) AfterProposalVote(ctx sdk.Context, proposalID uint64, voterAddr sdk.AccAddress) {
@@ -86,8 +84,10 @@ type Hooks struct {
 	k Keeper
 }
 
-var _ govtypes.GovHooks = Hooks{}
-var _ stakingtypes.StakingHooks = Hooks{}
+var (
+	_ govtypes.GovHooks         = Hooks{}
+	_ stakingtypes.StakingHooks = Hooks{}
+)
 
 // Return the wrapper struct
 func (k Keeper) Hooks() Hooks {
@@ -122,16 +122,22 @@ func (h Hooks) AfterValidatorCreated(ctx sdk.Context, valAddr sdk.ValAddress)   
 func (h Hooks) BeforeValidatorModified(ctx sdk.Context, valAddr sdk.ValAddress) {}
 func (h Hooks) AfterValidatorRemoved(ctx sdk.Context, consAddr sdk.ConsAddress, valAddr sdk.ValAddress) {
 }
+
 func (h Hooks) AfterValidatorBonded(ctx sdk.Context, consAddr sdk.ConsAddress, valAddr sdk.ValAddress) {
 }
+
 func (h Hooks) AfterValidatorBeginUnbonding(ctx sdk.Context, consAddr sdk.ConsAddress, valAddr sdk.ValAddress) {
 }
+
 func (h Hooks) BeforeDelegationCreated(ctx sdk.Context, delAddr sdk.AccAddress, valAddr sdk.ValAddress) {
 }
+
 func (h Hooks) BeforeDelegationSharesModified(ctx sdk.Context, delAddr sdk.AccAddress, valAddr sdk.ValAddress) {
 }
+
 func (h Hooks) BeforeDelegationRemoved(ctx sdk.Context, delAddr sdk.AccAddress, valAddr sdk.ValAddress) {
 }
+
 func (h Hooks) AfterDelegationModified(ctx sdk.Context, delAddr sdk.AccAddress, valAddr sdk.ValAddress) {
 	h.k.AfterDelegationModified(ctx, delAddr, valAddr)
 }

@@ -50,7 +50,7 @@ func NewKeeper(
 	}
 }
 
-//______________________________________________________________________
+// ______________________________________________________________________
 
 // Logger returns a module-specific logger.
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
@@ -76,7 +76,7 @@ func (k Keeper) SetMinter(ctx sdk.Context, minter types.Minter) {
 	store.Set(types.MinterKey, b)
 }
 
-//______________________________________________________________________
+// ______________________________________________________________________
 
 // GetParams returns the total set of minting parameters.
 func (k Keeper) GetParams(ctx sdk.Context) (params types.Params) {
@@ -89,7 +89,7 @@ func (k Keeper) SetParams(ctx sdk.Context, params types.Params) {
 	k.paramSpace.SetParamSet(ctx, &params)
 }
 
-//______________________________________________________________________
+// ______________________________________________________________________
 
 // StakingTokenSupply implements an alias call to the underlying staking keeper's
 // StakingTokenSupply to be used in BeginBlocker.
@@ -120,8 +120,7 @@ func (k Keeper) MintCoins(ctx sdk.Context, newCoins sdk.Coins) error {
 	return k.bankKeeper.MintCoins(ctx, types.ModuleName, newCoins)
 }
 
-//
-func (k Keeper) getAddress(ctx sdk.Context, listAddress []string) (sdk.AccAddress, error) {
+func (k Keeper) getAddress(ctx sdk.Context, listAddress []string) (sdk.AccAddress, error) { //nolint:unparam
 	strAddress := listAddress[0]
 	address, err := sdk.AccAddressFromBech32(strAddress)
 	if err != nil {
@@ -143,7 +142,7 @@ func (k Keeper) DistributeMintedCoin(ctx sdk.Context, mintedCoin sdk.Coin) error
 	}
 
 	communityRewardCoins := sdk.NewCoins(k.GetProportions(ctx, mintedCoin, types.CommunityProportion))
-	k.distrKeeper.FundCommunityPool(ctx, communityRewardCoins, k.accountKeeper.GetModuleAddress(types.ModuleName))
+	err = k.distrKeeper.FundCommunityPool(ctx, communityRewardCoins, k.accountKeeper.GetModuleAddress(types.ModuleName))
 	if err != nil {
 		return err
 	}
@@ -189,7 +188,6 @@ func (k Keeper) DistributeMintedCoin(ctx sdk.Context, mintedCoin sdk.Coin) error
 
 // GetInflationRate returns the current inflation rate.
 func (k Keeper) GetInflationRate(ctx sdk.Context) sdk.Dec {
-
 	mintDenom := k.GetParams(ctx).MintDenom
 	circulatingSupply := k.bankKeeper.GetSupply(ctx, mintDenom).Amount.ToDec()
 	if circulatingSupply.IsZero() {

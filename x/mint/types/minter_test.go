@@ -128,7 +128,7 @@ func BenchmarkBlockProvision(b *testing.B) {
 	params := DefaultParams()
 
 	s1 := rand.NewSource(100)
-	r1 := rand.New(s1)
+	r1 := rand.New(s1) //nolint: gosec // NOTE: weak random number generator is fine for benchmarking
 	minter.AnnualProvisions = sdk.NewDec(r1.Int63n(1000000))
 
 	// run the BlockProvision function b.N times

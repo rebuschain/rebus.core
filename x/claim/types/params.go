@@ -26,12 +26,12 @@ func ParamKeyTable() paramtypes.KeyTable {
 	return paramtypes.NewKeyTable().RegisterParamSet(&Params{})
 }
 
-func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
+func (params *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
-		paramtypes.NewParamSetPair(AirdropStartTime, &p.AirdropStartTime, validateStartTime),
-		paramtypes.NewParamSetPair(AirdropDuration, &p.AirdropDuration, validateDuration),
-		paramtypes.NewParamSetPair(ClaimDenom, &p.ClaimDenom, validateDenom),
-		paramtypes.NewParamSetPair(ClaimEnabled, &p.ClaimEnabled, validateBool),
+		paramtypes.NewParamSetPair(AirdropStartTime, &params.AirdropStartTime, validateStartTime),
+		paramtypes.NewParamSetPair(AirdropDuration, &params.AirdropDuration, validateDuration),
+		paramtypes.NewParamSetPair(ClaimDenom, &params.ClaimDenom, validateDenom),
+		paramtypes.NewParamSetPair(ClaimEnabled, &params.ClaimEnabled, validateBool),
 	}
 }
 

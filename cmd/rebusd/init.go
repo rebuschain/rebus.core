@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-
 	"strings"
 	"time"
 
@@ -105,14 +104,12 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 				chainID = fmt.Sprintf("reb_3333-%v", tmrand.Str(6))
 			}
 
-			if strings.Index(chainID, "reb_3333") != -1 {
+			if strings.Contains(chainID, "reb_3333") {
 				seeds := []string{
 					"a6d710cd9baac9e95a55525d548850c91f140cd9@3.211.101.169:26656",
 					"c296ee829f137cfe020ff293b6fc7d7c3f5eeead@54.157.52.47:26656",
 				}
 				config.P2P.Seeds = strings.Join(seeds, ",")
-			}
-			if strings.Index(chainID, "reb_1111") != -1 {
 			}
 
 			// Get bip39 mnemonic

@@ -172,6 +172,7 @@ func createFullMetadata(denom, symbol, name string) banktypes.Metadata {
 	}
 }
 
+//nolint:unparam
 func createMetadata(denom, symbol string) banktypes.Metadata {
 	return createFullMetadata(denom, symbol, denom)
 }

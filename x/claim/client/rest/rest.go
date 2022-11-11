@@ -7,16 +7,15 @@ import (
 )
 
 const (
-    MethodGet = "GET"
+	MethodGet = "GET"
 )
 
 // RegisterRoutes registers claim-related REST handlers to a router
 func RegisterRoutes(clientCtx client.Context, r *mux.Router) {
 }
 
-func registerQueryRoutes(clientCtx client.Context, r *mux.Router) {
+func registerQueryRoutes(clientCtx client.Context, r *mux.Router) { //nolint:unused
 }
 
-func registerTxHandlers(clientCtx client.Context, r *mux.Router) {
+func registerTxHandlers(clientCtx client.Context, r *mux.Router) { //nolint:unused
 }
-

@@ -430,6 +430,9 @@ func (suite *KeeperTestSuite) BalanceOf(contract, account common.Address) interf
 	if len(unpacked) == 0 {
 		return nil
 	}
+	if err != nil {
+		return nil
+	}
 
 	return unpacked[0]
 }

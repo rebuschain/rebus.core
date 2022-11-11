@@ -150,7 +150,7 @@ const (
 	// Name defines the application binary name
 	Name = "rebusd"
 	// latest software upgrade name
-	upgradeName = "Rebus-sun-v0.0.1"
+	upgradeName = "Rebus-sun-v0.0.1" //nolint:unused
 )
 
 var (

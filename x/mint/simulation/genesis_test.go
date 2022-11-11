@@ -57,7 +57,7 @@ func TestRandomizedGenState1(t *testing.T) {
 	cdc := codec.NewProtoCodec(interfaceRegistry)
 
 	s := rand.NewSource(1)
-	r := rand.New(s)
+	r := rand.New(s) //nolint:gosec // NOTE: use of weak random number generator
 	// all these tests will panic
 	tests := []struct {
 		simState module.SimulationState

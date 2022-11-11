@@ -89,7 +89,7 @@ func (suite *AnteTestSuite) CommitAfter(t time.Duration) {
 	suite.app.EndBlock(abci.RequestEndBlock{Height: header.Height})
 	_ = suite.app.Commit()
 
-	header.Height += 1
+	header.Height++
 	header.Time = header.Time.Add(t)
 	suite.app.BeginBlock(abci.RequestBeginBlock{
 		Header: header,
@@ -99,7 +99,7 @@ func (suite *AnteTestSuite) CommitAfter(t time.Duration) {
 	suite.ctx = suite.app.BaseApp.NewContext(false, header)
 }
 
-func (s *AnteTestSuite) CreateTestTxBuilder(gasPrice sdk.Int, denom string, msgs ...sdk.Msg) client.TxBuilder {
+func (suite *AnteTestSuite) CreateTestTxBuilder(gasPrice sdk.Int, denom string, msgs ...sdk.Msg) client.TxBuilder {
 	encodingConfig := encoding.MakeConfig(app.ModuleBasics)
 	gasLimit := uint64(1000000)
 
@@ -113,7 +113,7 @@ func (s *AnteTestSuite) CreateTestTxBuilder(gasPrice sdk.Int, denom string, msgs
 	return txBuilder
 }
 
-func (s *AnteTestSuite) CreateEthTestTxBuilder(msgEthereumTx *evmtypes.MsgEthereumTx) client.TxBuilder {
+func (suite *AnteTestSuite) CreateEthTestTxBuilder(msgEthereumTx *evmtypes.MsgEthereumTx) client.TxBuilder {
 	encodingConfig := encoding.MakeConfig(app.ModuleBasics)
 	option, err := codectypes.NewAnyWithValue(&evmtypes.ExtensionOptionsEthereumTx{})
 	s.Require().NoError(err)
@@ -136,7 +136,7 @@ func (s *AnteTestSuite) CreateEthTestTxBuilder(msgEthereumTx *evmtypes.MsgEthere
 	return txBuilder
 }
 
-func (s *AnteTestSuite) BuildTestEthTx(
+func (suite *AnteTestSuite) BuildTestEthTx(
 	from common.Address,
 	to common.Address,
 	gasPrice *big.Int,

@@ -45,5 +45,5 @@ func (app *Rebus) ScheduleForkUpgrade(ctx sdk.Context) {
 				),
 			)
 		}*/
-	return
+
 }

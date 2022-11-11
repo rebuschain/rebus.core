@@ -934,8 +934,8 @@ func (suite *KeeperTestSuite) TestWrongPairOwnerERC20NativeCoin() {
 			// Precondition: Convert Coin to ERC20
 			coins := sdk.NewCoins(sdk.NewCoin(cosmosTokenBase, sdk.NewInt(tc.mint)))
 			sender := sdk.AccAddress(suite.address.Bytes())
-			suite.app.BankKeeper.MintCoins(suite.ctx, types.ModuleName, coins)
-			suite.app.BankKeeper.SendCoinsFromModuleToAccount(suite.ctx, types.ModuleName, sender, coins)
+			suite.app.BankKeeper.MintCoins(suite.ctx, types.ModuleName, coins)                            //nolint:errcheck
+			suite.app.BankKeeper.SendCoinsFromModuleToAccount(suite.ctx, types.ModuleName, sender, coins) //nolint:errcheck
 			msg := types.NewMsgConvertCoin(
 				sdk.NewCoin(cosmosTokenBase, sdk.NewInt(tc.burn)),
 				suite.address,
@@ -1109,8 +1109,8 @@ func (suite *KeeperTestSuite) TestConvertCoinNativeIBCVoucher() {
 				sender,
 			)
 
-			suite.app.BankKeeper.MintCoins(suite.ctx, types.ModuleName, coins)
-			suite.app.BankKeeper.SendCoinsFromModuleToAccount(suite.ctx, types.ModuleName, sender, coins)
+			suite.app.BankKeeper.MintCoins(suite.ctx, types.ModuleName, coins)                            //nolint:errcheck
+			suite.app.BankKeeper.SendCoinsFromModuleToAccount(suite.ctx, types.ModuleName, sender, coins) //nolint:errcheck
 
 			tc.extra()
 			res, err := suite.app.Erc20Keeper.ConvertCoin(ctx, msg)
@@ -1270,8 +1270,8 @@ func (suite *KeeperTestSuite) TestConvertERC20NativeIBCVoucher() {
 			// Precondition: Convert Coin to ERC20
 			coins := sdk.NewCoins(sdk.NewCoin(ibcBase, sdk.NewInt(tc.mint)))
 			sender := sdk.AccAddress(suite.address.Bytes())
-			suite.app.BankKeeper.MintCoins(suite.ctx, types.ModuleName, coins)
-			suite.app.BankKeeper.SendCoinsFromModuleToAccount(suite.ctx, types.ModuleName, sender, coins)
+			suite.app.BankKeeper.MintCoins(suite.ctx, types.ModuleName, coins)                            //nolint:errcheck
+			suite.app.BankKeeper.SendCoinsFromModuleToAccount(suite.ctx, types.ModuleName, sender, coins) //nolint:errcheck
 			msg := types.NewMsgConvertCoin(
 				sdk.NewCoin(ibcBase, sdk.NewInt(tc.burn)),
 				suite.address,

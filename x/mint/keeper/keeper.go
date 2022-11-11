@@ -142,7 +142,7 @@ func (k Keeper) DistributeMintedCoin(ctx sdk.Context, mintedCoin sdk.Coin) error
 	}
 
 	communityRewardCoins := sdk.NewCoins(k.GetProportions(ctx, mintedCoin, types.CommunityProportion))
-	k.distrKeeper.FundCommunityPool(ctx, communityRewardCoins, k.accountKeeper.GetModuleAddress(types.ModuleName))
+	err = k.distrKeeper.FundCommunityPool(ctx, communityRewardCoins, k.accountKeeper.GetModuleAddress(types.ModuleName))
 	if err != nil {
 		return err
 	}

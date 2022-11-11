@@ -12,10 +12,8 @@ import (
 
 func (k Keeper) isClaimActive(ctx sdk.Context) bool {
 	params, _ := k.GetParams(ctx)
-	if !params.ClaimEnabled {
-		return false
-	}
-	return true
+
+	return params.ClaimEnabled
 }
 
 func (k Keeper) AfterProposalVote(ctx sdk.Context, proposalID uint64, voterAddr sdk.AccAddress) {

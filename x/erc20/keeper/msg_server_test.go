@@ -870,8 +870,8 @@ func (suite *KeeperTestSuite) TestConvertCoinNativeERC20() {
 			sender := sdk.AccAddress(suite.address.Bytes())
 
 			// Precondition: Mint Coins to convert on sender account
-			suite.app.BankKeeper.MintCoins(suite.ctx, types.ModuleName, coins)
-			suite.app.BankKeeper.SendCoinsFromModuleToAccount(suite.ctx, types.ModuleName, sender, coins)
+			suite.app.BankKeeper.MintCoins(suite.ctx, types.ModuleName, coins)                            //nolint:errcheck
+			suite.app.BankKeeper.SendCoinsFromModuleToAccount(suite.ctx, types.ModuleName, sender, coins) //nolint:errcheck
 			cosmosBalance := suite.app.BankKeeper.GetBalance(suite.ctx, sender, coinName)
 			suite.Require().Equal(sdk.NewInt(tc.mint), cosmosBalance.Amount)
 

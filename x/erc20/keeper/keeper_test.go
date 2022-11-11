@@ -207,7 +207,7 @@ func (suite *KeeperTestSuite) DeployContract(name, symbol string, decimals uint8
 		return common.Address{}, err
 	}
 
-	data := append(contracts.ERC20MinterBurnerDecimalsContract.Bin, ctorArgs...)
+	data := append(contracts.ERC20MinterBurnerDecimalsContract.Bin, ctorArgs...) // nolint:gocritic
 	args, err := json.Marshal(&evm.TransactionArgs{
 		From: &suite.address,
 		Data: (*hexutil.Bytes)(&data),
@@ -260,7 +260,7 @@ func (suite *KeeperTestSuite) DeployContractMaliciousDelayed(name string, symbol
 	ctorArgs, err := contracts.ERC20MaliciousDelayedContract.ABI.Pack("", big.NewInt(1000000000000000000))
 	suite.Require().NoError(err)
 
-	data := append(contracts.ERC20MaliciousDelayedContract.Bin, ctorArgs...)
+	data := append(contracts.ERC20MaliciousDelayedContract.Bin, ctorArgs...) //nolint:gocritic
 	args, err := json.Marshal(&evm.TransactionArgs{
 		From: &suite.address,
 		Data: (*hexutil.Bytes)(&data),
@@ -269,7 +269,7 @@ func (suite *KeeperTestSuite) DeployContractMaliciousDelayed(name string, symbol
 
 	res, err := suite.queryClientEvm.EstimateGas(ctx, &evm.EthCallRequest{
 		Args:   args,
-		GasCap: uint64(config.DefaultGasCap),
+		GasCap: config.DefaultGasCap,
 	})
 	suite.Require().NoError(err)
 
@@ -303,7 +303,7 @@ func (suite *KeeperTestSuite) DeployContractDirectBalanceManipulation(name strin
 	ctorArgs, err := contracts.ERC20DirectBalanceManipulationContract.ABI.Pack("", big.NewInt(1000000000000000000))
 	suite.Require().NoError(err)
 
-	data := append(contracts.ERC20DirectBalanceManipulationContract.Bin, ctorArgs...)
+	data := append(contracts.ERC20DirectBalanceManipulationContract.Bin, ctorArgs...) //nolint:gocritic // We intend to append to a different slice
 	args, err := json.Marshal(&evm.TransactionArgs{
 		From: &suite.address,
 		Data: (*hexutil.Bytes)(&data),
@@ -312,7 +312,7 @@ func (suite *KeeperTestSuite) DeployContractDirectBalanceManipulation(name strin
 
 	res, err := suite.queryClientEvm.EstimateGas(ctx, &evm.EthCallRequest{
 		Args:   args,
-		GasCap: uint64(config.DefaultGasCap),
+		GasCap: config.DefaultGasCap,
 	})
 	suite.Require().NoError(err)
 
@@ -367,9 +367,9 @@ func (suite *KeeperTestSuite) TransferERC20TokenToModule(contractAddr, from comm
 	return suite.sendTx(contractAddr, from, transferData)
 }
 
-func (suite *KeeperTestSuite) GrantERC20Token(contractAddr, from, to common.Address, role_string string) *evm.MsgEthereumTx {
+func (suite *KeeperTestSuite) GrantERC20Token(contractAddr, from, to common.Address, roleString string) *evm.MsgEthereumTx {
 	// 0xCc508cD0818C85b8b8a1aB4cEEef8d981c8956A6 MINTER_ROLE
-	role := crypto.Keccak256([]byte(role_string))
+	role := crypto.Keccak256([]byte(roleString))
 	// needs to be an array not a slice
 	var v [32]byte
 	copy(v[:], role)

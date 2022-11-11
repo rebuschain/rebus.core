@@ -7,7 +7,7 @@ import (
 )
 
 const (
-    MethodGet = "GET"
+	MethodGet = "GET"
 )
 
 // RegisterRoutes registers claim-related REST handlers to a router

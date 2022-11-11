@@ -243,7 +243,6 @@ func (suite *KeeperTestSuite) TestForceFail() {
 		commit   bool
 		expPass  bool
 	}{
-
 		{
 			"Force estimate gas error",
 			func() {

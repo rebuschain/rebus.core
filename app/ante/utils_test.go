@@ -68,7 +68,6 @@ func (suite *AnteTestSuite) SetupTest(isCheckTx bool) {
 		LastResultsHash:    tmhash.Sum([]byte("last_result")),
 	})
 
-	//suite.denom = claimstypes.DefaultClaimsDenom
 	evmParams := suite.app.EvmKeeper.GetParams(suite.ctx)
 	evmParams.EvmDenom = suite.denom
 	suite.app.EvmKeeper.SetParams(suite.ctx, evmParams)

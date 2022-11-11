@@ -31,15 +31,19 @@ const (
 	ComRatio = "0.05"
 )
 
-var TreasuryAddressList = [1]string{"rebus1yfn2z9klucnuvjvdgp42h8qqafstweckeactmg"}
-var EthicalAddressList = [1]string{"rebus1yzj9fsh7mg2q3hjs42dvxhggrgqf8tgc8r2qfj"}
-var IncentiveAddressList = [1]string{"rebus13uggc2mynhecv9zpvtmy4gqsmmxeyle48wt628"}
+var (
+	TreasuryAddressList  = [1]string{"rebus1yfn2z9klucnuvjvdgp42h8qqafstweckeactmg"}
+	EthicalAddressList   = [1]string{"rebus1yzj9fsh7mg2q3hjs42dvxhggrgqf8tgc8r2qfj"}
+	IncentiveAddressList = [1]string{"rebus13uggc2mynhecv9zpvtmy4gqsmmxeyle48wt628"}
+)
 
-var PosRewardProportion sdk.Dec
-var TreasuryProportion sdk.Dec
-var IncentiveProportion sdk.Dec
-var EthicalProportion sdk.Dec
-var CommunityProportion sdk.Dec
+var (
+	PosRewardProportion sdk.Dec
+	TreasuryProportion  sdk.Dec
+	IncentiveProportion sdk.Dec
+	EthicalProportion   sdk.Dec
+	CommunityProportion sdk.Dec
+)
 
 var PosAllocation = sdk.NewInt(635_708_034).Mul(ethermint.PowerReduction)
 

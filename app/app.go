@@ -111,7 +111,7 @@ import (
 	feemarkettypes "github.com/evmos/ethermint/x/feemarket/types"
 
 	// unnamed import of statik for swagger UI support
-	//_ "github.com/rebuschain/rebus.core/v1/client/docs/statik"
+	// _ "github.com/rebuschain/rebus.core/v1/client/docs/statik"
 
 	"github.com/rebuschain/rebus.core/v1/app/ante"
 
@@ -925,7 +925,8 @@ func GetMaccPerms() map[string][]string {
 
 // initParamsKeeper init params keeper and its subspaces
 func initParamsKeeper(
-	appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino, key, tkey sdk.StoreKey) paramskeeper.Keeper {
+	appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino, key, tkey sdk.StoreKey,
+) paramskeeper.Keeper {
 	paramsKeeper := paramskeeper.NewKeeper(appCodec, legacyAmino, key, tkey)
 
 	// SDK subspaces
@@ -949,7 +950,6 @@ func initParamsKeeper(
 }
 
 func (app *Rebus) setupUpgradeHandlers() {
-
 	// When a planned update height is reached, the old binary will panic
 	// writing on disk the height and name of the update that triggered it
 	// This will read that value, and execute the preparations for the upgrade.
@@ -968,7 +968,6 @@ func (app *Rebus) setupUpgradeHandlers() {
 	var storeUpgrades *storetypes.StoreUpgrades
 
 	switch upgradeInfo.Name {
-	//case upgradeV1.UpgradeName:
 	// no store upgrades in upgradeV1
 	}
 	if storeUpgrades != nil {

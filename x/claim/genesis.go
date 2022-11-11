@@ -10,7 +10,6 @@ import (
 // InitGenesis initializes the capability module's state from a provided genesis
 // state.
 func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) {
-
 	// ensure claim module account is set on genesis
 	if acc := k.GetModuleAccount(ctx); acc == nil {
 		panic("the claim module account has not been set")

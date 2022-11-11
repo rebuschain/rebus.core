@@ -63,7 +63,6 @@ func (k Keeper) GetClaimRecords(ctx sdk.Context) []types.ClaimRecord {
 
 // GetClaimRecord returns the claim record for a specific address
 func (k Keeper) GetClaimRecord(ctx sdk.Context, addr sdk.AccAddress) (types.ClaimRecord, error) {
-
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), []byte(types.ClaimRecordsStorePrefix))
 
 	bz := store.Get(addr)
@@ -101,7 +100,6 @@ func (k Keeper) SetClaimRecord(ctx sdk.Context, claimRecord types.ClaimRecord) e
 
 // GetClaimable returns claimable amount for a specific action done by an address
 func (k Keeper) GetClaimableAmountForAction(ctx sdk.Context, claimRecord types.ClaimRecord, addr sdk.AccAddress, action types.Action) (sdk.Coins, error) {
-
 	if claimRecord.Address == "" {
 		return sdk.Coins{}, nil
 	}

@@ -533,7 +533,6 @@ func (b *MockBankKeeper) GetDenomMetaData(ctx sdk.Context, denom string) (bankty
 }
 
 func (b *MockBankKeeper) SetDenomMetaData(ctx sdk.Context, denomMetaData banktypes.Metadata) {
-
 }
 
 func (b *MockBankKeeper) HasSupply(ctx sdk.Context, denom string) bool {

@@ -4,7 +4,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/rebuschain/rebus.core/v1/x/claim/types"
 
 	"github.com/ethereum/go-ethereum/core"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
@@ -19,39 +18,43 @@ func (k Keeper) isClaimActive(ctx sdk.Context) bool {
 }
 
 func (k Keeper) AfterProposalVote(ctx sdk.Context, proposalID uint64, voterAddr sdk.AccAddress) {
-	if !k.isClaimActive(ctx) {
-		return
-	}
-	claimRecord, err := k.GetClaimRecord(ctx, voterAddr)
-	if err != nil {
-		panic(err.Error())
-	}
-	if claimRecord.Address == "" {
-		return
-	}
+	/*
+		if !k.isClaimActive(ctx) {
+			return
+		}
+		claimRecord, err := k.GetClaimRecord(ctx, voterAddr)
+		if err != nil {
+			panic(err.Error())
+		}
+		if claimRecord.Address == "" {
+			return
+		}
 
-	_, err = k.ClaimCoinsForAction(ctx, claimRecord, voterAddr, types.ActionVote)
-	if err != nil {
-		panic(err.Error())
-	}
+		_, err = k.ClaimCoinsForAction(ctx, claimRecord, voterAddr, types.ActionVote)
+		if err != nil {
+			panic(err.Error())
+		}
+	*/
 }
 
 func (k Keeper) AfterDelegationModified(ctx sdk.Context, delAddr sdk.AccAddress, valAddr sdk.ValAddress) {
-	if !k.isClaimActive(ctx) {
-		return
-	}
-	claimRecord, err := k.GetClaimRecord(ctx, delAddr)
-	if err != nil {
-		panic(err.Error())
-	}
-	if claimRecord.Address == "" {
-		return
-	}
+	/*
+		if !k.isClaimActive(ctx) {
+			return
+		}
+		claimRecord, err := k.GetClaimRecord(ctx, delAddr)
+		if err != nil {
+			panic(err.Error())
+		}
+		if claimRecord.Address == "" {
+			return
+		}
 
-	_, err = k.ClaimCoinsForAction(ctx, claimRecord, delAddr, types.ActionDelegate)
-	if err != nil {
-		panic(err.Error())
-	}
+		_, err = k.ClaimCoinsForAction(ctx, claimRecord, delAddr, types.ActionDelegate)
+		if err != nil {
+			panic(err.Error())
+		}
+	*/
 }
 
 // AfterEVMStateTransition implements the ethermint evm PostTxProcessing hook.
@@ -111,7 +114,7 @@ func (h Hooks) AfterProposalDeposit(ctx sdk.Context, proposalID uint64, deposito
 }
 
 func (h Hooks) AfterProposalVote(ctx sdk.Context, proposalID uint64, voterAddr sdk.AccAddress) {
-	h.k.AfterProposalVote(ctx, proposalID, voterAddr)
+	// h.k.AfterProposalVote(ctx, proposalID, voterAddr)
 }
 
 func (h Hooks) AfterProposalInactive(ctx sdk.Context, proposalID uint64) {}
@@ -133,6 +136,6 @@ func (h Hooks) BeforeDelegationSharesModified(ctx sdk.Context, delAddr sdk.AccAd
 func (h Hooks) BeforeDelegationRemoved(ctx sdk.Context, delAddr sdk.AccAddress, valAddr sdk.ValAddress) {
 }
 func (h Hooks) AfterDelegationModified(ctx sdk.Context, delAddr sdk.AccAddress, valAddr sdk.ValAddress) {
-	h.k.AfterDelegationModified(ctx, delAddr, valAddr)
+	// h.k.AfterDelegationModified(ctx, delAddr, valAddr)
 }
 func (h Hooks) BeforeValidatorSlashed(ctx sdk.Context, valAddr sdk.ValAddress, fraction sdk.Dec) {}

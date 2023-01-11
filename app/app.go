@@ -132,6 +132,7 @@ import (
 	minttypes "github.com/rebuschain/rebus.core/v1/x/mint/types"
 
 	upgradeV1 "github.com/rebuschain/rebus.core/v1/app/upgrades/v1"
+	upgradeV2 "github.com/rebuschain/rebus.core/v1/app/upgrades/v2"
 )
 
 func init() {
@@ -961,10 +962,17 @@ func (app *Rebus) setupUpgradeHandlers() {
 	if app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
 		return
 	}
+
 	app.UpgradeKeeper.SetUpgradeHandler(
 		upgradeV1.UpgradeName,
 		upgradeV1.CreateUpgradeHandler(app.mm, app.configurator, app.StakingKeeper),
 	)
+
+	app.UpgradeKeeper.SetUpgradeHandler(
+		upgradeV2.UpgradeName,
+		upgradeV2.CreateUpgradeHandler(app.mm, app.configurator),
+	)
+
 	var storeUpgrades *storetypes.StoreUpgrades
 
 	switch upgradeInfo.Name {

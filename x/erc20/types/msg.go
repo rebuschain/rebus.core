@@ -55,17 +55,13 @@ func (msg MsgConvertCoin) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg *MsgConvertCoin) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
+func (msg MsgConvertCoin) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines whose signature is required
 func (msg MsgConvertCoin) GetSigners() []sdk.AccAddress {
-	addr, err := sdk.AccAddressFromBech32(msg.Sender)
-	if err != nil {
-		return nil
-	}
-
+	addr := sdk.MustAccAddressFromBech32(msg.Sender)
 	return []sdk.AccAddress{addr}
 }
 
@@ -104,8 +100,8 @@ func (msg MsgConvertERC20) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg *MsgConvertERC20) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(msg))
+func (msg MsgConvertERC20) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines whose signature is required

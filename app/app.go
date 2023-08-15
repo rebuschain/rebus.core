@@ -133,7 +133,7 @@ import (
 
 	upgradeV1 "github.com/rebuschain/rebus.core/v1/app/upgrades/v1"
 	upgradeV3 "github.com/rebuschain/rebus.core/v1/app/upgrades/v3"
-	upgradeV31 "github.com/rebuschain/rebus.core/v1/app/upgrades/v3_1"
+	upgradeV4 "github.com/rebuschain/rebus.core/v1/app/upgrades/v4"
 )
 
 func init() {
@@ -975,8 +975,8 @@ func (app *Rebus) setupUpgradeHandlers() {
 	)
 
 	app.UpgradeKeeper.SetUpgradeHandler(
-		upgradeV31.UpgradeName,
-		upgradeV31.CreateUpgradeHandler(app.mm, app.configurator),
+		upgradeV4.UpgradeName,
+		upgradeV4.CreateUpgradeHandler(app.mm, app.configurator),
 	)
 
 	var storeUpgrades *storetypes.StoreUpgrades
